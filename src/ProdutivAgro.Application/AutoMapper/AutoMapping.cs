@@ -2,6 +2,7 @@ using AutoMapper;
 using ProdutivAgro.Communication.Requests;
 using ProdutivAgro.Communication.Requests.Users;
 using ProdutivAgro.Communication.Responses;
+using ProdutivAgro.Communication.Responses.Users;
 using ProdutivAgro.Domain.Entities;
 
 namespace ProdutivAgro.Application.AutoMapper;
@@ -23,5 +24,6 @@ public class AutoMapping : Profile
     private void EntityToResponse()
     {
         CreateMap<Organization, ResponseCreatedOrganizationJson>();
+        CreateMap<User, ResponseUserProfileJson>();
     }
 }
