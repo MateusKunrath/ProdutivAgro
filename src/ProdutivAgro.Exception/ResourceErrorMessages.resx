@@ -131,4 +131,7 @@
     <data name="PHONE_NUMBER_ALREADY_EXISTS" xml:space="preserve">
         <value>Phone number already exists.</value>
     </data>
+    <data name="IDENTIFIER_OR_PASSWORD_INVALID" xml:space="preserve">
+        <value>Credentials is invalid.</value>
+    </data>
 </root>

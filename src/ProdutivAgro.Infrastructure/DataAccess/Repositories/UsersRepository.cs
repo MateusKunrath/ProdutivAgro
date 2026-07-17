@@ -11,14 +11,12 @@ internal class UsersRepository(ProdutivAgroDbContext dbContext) : IUsersReadOnly
         return await dbContext.Users.AsNoTracking().AnyAsync(user => user.Email.Equals(email));
     }
 
-    public async Task<User?> GetUserByEmail(string email)
+    public async Task<User?> GetUserByEmailOrPhoneNumber(string identifier)
     {
-        return await dbContext.Users.AsNoTracking().FirstOrDefaultAsync(user => user.Email.Equals(email));
-    }
-
-    public async Task<User?> GetUserByPhoneNumber(string phoneNumber)
-    {
-        return await dbContext.Users.AsNoTracking().FirstOrDefaultAsync(user => user.PhoneNumber.Equals(phoneNumber));
+        return await dbContext
+                     .Users
+                     .AsNoTracking()
+                     .FirstOrDefaultAsync(user => user.Email.Equals(identifier) || user.PhoneNumber.Equals(identifier));
     }
 
     async Task<User?> IUsersReadOnlyRepository.GetById(Guid id)

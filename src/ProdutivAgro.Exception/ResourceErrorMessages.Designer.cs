@@ -87,6 +87,15 @@ namespace ProdutivAgro.Exception {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Credentials is invalid..
+        /// </summary>
+        public static string IDENTIFIER_OR_PASSWORD_INVALID {
+            get {
+                return ResourceManager.GetString("IDENTIFIER_OR_PASSWORD_INVALID", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Name is required..
         /// </summary>
         public static string NAME_EMPTY {

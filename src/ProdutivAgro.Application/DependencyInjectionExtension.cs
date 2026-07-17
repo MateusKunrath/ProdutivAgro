@@ -1,5 +1,6 @@
 using Microsoft.Extensions.DependencyInjection;
 using ProdutivAgro.Application.AutoMapper;
+using ProdutivAgro.Application.UseCases.Authentication.Authenticate;
 using ProdutivAgro.Application.UseCases.Organizations.Create;
 using ProdutivAgro.Application.UseCases.Users.Create;
 
@@ -22,6 +23,7 @@ public static class DependencyInjectionExtension
     {
         AddOrganizationUseCases(services);
         AddUserUseCases(services);
+        AddAuthenticationUseCases(services);
     }
 
     private static void AddOrganizationUseCases(IServiceCollection services)
@@ -32,5 +34,10 @@ public static class DependencyInjectionExtension
     private static void AddUserUseCases(IServiceCollection services)
     {
         services.AddScoped<ICreateUserUseCase, CreateUserUseCase>();
+    }
+
+    private static void AddAuthenticationUseCases(IServiceCollection services)
+    {
+        services.AddScoped<IAuthenticateUseCase, AuthenticateUseCase>();
     }
 }
