@@ -114,6 +114,15 @@ namespace ProdutivAgro.Exception {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Organization is required..
+        /// </summary>
+        public static string ORGANIZATION_NAME_EMPTY {
+            get {
+                return ResourceManager.GetString("ORGANIZATION_NAME_EMPTY", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Organization not found..
         /// </summary>
         public static string ORGANIZATION_NOT_FOUND {

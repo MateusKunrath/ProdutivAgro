@@ -134,4 +134,7 @@
     <data name="IDENTIFIER_OR_PASSWORD_INVALID" xml:space="preserve">
         <value>Credentials is invalid.</value>
     </data>
+    <data name="ORGANIZATION_NAME_EMPTY" xml:space="preserve">
+        <value>Organization is required.</value>
+    </data>
 </root>

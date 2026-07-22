@@ -12,7 +12,7 @@ public class CreateUserValidator : AbstractValidator<RequestCreateUserJson>
         RuleFor(x => x.Email)
             .NotEmpty().WithMessage(ResourceErrorMessages.EMAIL_EMPTY)
             .EmailAddress()
-            .When(user => !string.IsNullOrEmpty(user.Email), ApplyConditionTo.CurrentValidator)
+            .When(user => !string.IsNullOrWhiteSpace(user.Email), ApplyConditionTo.CurrentValidator)
             .WithMessage(ResourceErrorMessages.EMAIL_INVALID);
         RuleFor(x => x.PhoneNumber).SetValidator(new PhoneNumberValidator<RequestCreateUserJson>());
         RuleFor(x => x.Password).SetValidator(new PasswordValidator<RequestCreateUserJson>());
