@@ -6,10 +6,7 @@
     <Project Path="src/ProdutivAgro.Domain/ProdutivAgro.Domain.csproj" />
     <Project Path="src/ProdutivAgro.Exception/ProdutivAgro.Exception.csproj" />
     <Project Path="src/ProdutivAgro.Infrastructure/ProdutivAgro.Infrastructure.csproj" />
+    <Project Path="src/ProdutivAgro.SharedKernel/ProdutivAgro.SharedKernel.csproj" />
   </Folder>
-  <Folder Name="/tests/">
-    <Project Path="tests/CommonTestUtilities/CommonTestUtilities.csproj" />
-    <Project Path="tests/UseCases.Tests/UseCases.Tests.csproj" />
-    <Project Path="tests/Validators.Tests/Validators.Tests.csproj" />
-  </Folder>
+  <Folder Name="/tests/" />
 </Solution>

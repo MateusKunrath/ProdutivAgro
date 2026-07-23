@@ -1,9 +1,5 @@
+using FluentValidation;
 using Microsoft.Extensions.DependencyInjection;
-using ProdutivAgro.Application.AutoMapper;
-using ProdutivAgro.Application.UseCases.Authentication.Authenticate;
-using ProdutivAgro.Application.UseCases.Organizations.Create;
-using ProdutivAgro.Application.UseCases.Users.Create;
-using ProdutivAgro.Application.UseCases.Users.Profile;
 
 namespace ProdutivAgro.Application;
 
@@ -11,35 +7,20 @@ public static class DependencyInjectionExtension
 {
     public static void AddApplication(this IServiceCollection services)
     {
-        AddAutoMapper(services);
-        AddUseCases(services);
+        AddMediatR(services);
+        AddValidators(services);
     }
 
-    private static void AddAutoMapper(IServiceCollection services)
+    private static void AddMediatR(IServiceCollection services)
     {
-        services.AddAutoMapper(config => config.AddProfile<AutoMapping>());
+        services.AddMediatR(config =>
+        {
+            config.RegisterServicesFromAssembly(typeof(DependencyInjectionExtension).Assembly);
+        });
     }
 
-    private static void AddUseCases(IServiceCollection services)
+    private static void AddValidators(IServiceCollection services)
     {
-        AddOrganizationUseCases(services);
-        AddUserUseCases(services);
-        AddAuthenticationUseCases(services);
-    }
-
-    private static void AddOrganizationUseCases(IServiceCollection services)
-    {
-        services.AddScoped<ICreateOrganizationUseCase, CreateOrganizationUseCase>();
-    }
-
-    private static void AddUserUseCases(IServiceCollection services)
-    {
-        services.AddScoped<ICreateUserUseCase, CreateUserUseCase>();
-        services.AddScoped<IGetUserProfileUseCase, GetUserProfileUseCase>();
-    }
-
-    private static void AddAuthenticationUseCases(IServiceCollection services)
-    {
-        services.AddScoped<IAuthenticateUseCase, AuthenticateUseCase>();
+        services.AddValidatorsFromAssembly(typeof(DependencyInjectionExtension).Assembly);
     }
 }

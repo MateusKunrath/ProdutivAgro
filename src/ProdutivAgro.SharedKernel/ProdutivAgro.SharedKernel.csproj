@@ -6,12 +6,4 @@
         <Nullable>enable</Nullable>
     </PropertyGroup>
 
-    <ItemGroup>
-        <ProjectReference Include="..\ProdutivAgro.SharedKernel\ProdutivAgro.SharedKernel.csproj"/>
-    </ItemGroup>
-
-    <ItemGroup>
-        <Folder Include="Security\Cryptography\"/>
-    </ItemGroup>
-
 </Project>

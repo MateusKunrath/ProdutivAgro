@@ -1,16 +1,16 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using ProdutivAgro.Application.Common.Security;
+using ProdutivAgro.Domain.Identity.Services;
+using ProdutivAgro.Domain.Products.Repositories;
 using ProdutivAgro.Domain.Repositories;
-using ProdutivAgro.Domain.Repositories.Organizations;
-using ProdutivAgro.Domain.Repositories.Users;
-using ProdutivAgro.Domain.Security.Cryptography;
 using ProdutivAgro.Domain.Security.Tokens;
-using ProdutivAgro.Domain.Services.AuthenticatedUser;
-using ProdutivAgro.Infrastructure.DataAccess;
-using ProdutivAgro.Infrastructure.DataAccess.Repositories;
-using ProdutivAgro.Infrastructure.Security.Tokens;
-using ProdutivAgro.Infrastructure.Services.AuthenticatedUser;
+using ProdutivAgro.Infrastructure.Identity;
+using ProdutivAgro.Infrastructure.Identity.Jwt;
+using ProdutivAgro.Infrastructure.Identity.Password;
+using ProdutivAgro.Infrastructure.Persistence;
+using ProdutivAgro.Infrastructure.Repositories;
 
 namespace ProdutivAgro.Infrastructure;
 
@@ -18,8 +18,8 @@ public static class DependencyInjectionExtension
 {
     public static void AddInfrastructure(this IServiceCollection services, IConfiguration configuration)
     {
-        services.AddScoped<IPasswordEncrypter, Security.Cryptography.BCrypt>();
-        services.AddScoped<IAuthenticatedUser, AuthenticatedUser>();
+        services.AddScoped<IPasswordEncrypter, BCryptPasswordHasher>();
+        services.AddScoped<ICurrentUser, CurrentUser>();
 
         AddToken(services, configuration);
         AddRepositories(services);
@@ -38,8 +38,9 @@ public static class DependencyInjectionExtension
     {
         services.AddScoped<IUnitOfWork, UnitOfWork>();
 
-        AddOrganizationsRepository(services);
-        AddUsersRepository(services);
+        AddProductsRepository(services);
+        // AddOrganizationsRepository(services);
+        // AddUsersRepository(services);
     }
 
     private static void AddDbContext(IServiceCollection services, IConfiguration configuration)
@@ -49,16 +50,21 @@ public static class DependencyInjectionExtension
             options.UseNpgsql(connectionString, b => b.MigrationsAssembly("ProdutivAgro.Infrastructure")));
     }
 
-    private static void AddOrganizationsRepository(IServiceCollection services)
-    {
-        services.AddScoped<IOrganizationsReadOnlyRepository, OrganizationsRepository>();
-        services.AddScoped<IOrganizationsWriteOnlyRepository, OrganizationsRepository>();
-        services.AddScoped<IOrganizationsUpdateOnlyRepository, OrganizationsRepository>();
-    }
+    // private static void AddOrganizationsRepository(IServiceCollection services)
+    // {
+    //     services.AddScoped<IOrganizationsReadOnlyRepository, OrganizationsRepository>();
+    //     services.AddScoped<IOrganizationsWriteOnlyRepository, OrganizationsRepository>();
+    //     services.AddScoped<IOrganizationsUpdateOnlyRepository, OrganizationsRepository>();
+    // }
+    //
+    // private static void AddUsersRepository(IServiceCollection services)
+    // {
+    //     services.AddScoped<IUsersReadOnlyRepository, UsersRepository>();
+    //     services.AddScoped<IUsersWriteOnlyRepository, UsersRepository>();
+    // }
 
-    private static void AddUsersRepository(IServiceCollection services)
+    private static void AddProductsRepository(IServiceCollection services)
     {
-        services.AddScoped<IUsersReadOnlyRepository, UsersRepository>();
-        services.AddScoped<IUsersWriteOnlyRepository, UsersRepository>();
+        services.AddScoped<IProductsReadOnlyRepository, ProductsRepository>();
     }
 }

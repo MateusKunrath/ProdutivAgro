@@ -1,0 +1,10 @@
+using MediatR;
+
+namespace ProdutivAgro.Application.Products.Commands.CreateProduct;
+
+public sealed class CreateProductCommand : IRequest<CreateProductResult>
+{
+    public string Description { get; init; } = string.Empty;
+    public decimal UnitPrice { get; init; }
+    public string MeasurementUnit { get; init; } = string.Empty;
+}
