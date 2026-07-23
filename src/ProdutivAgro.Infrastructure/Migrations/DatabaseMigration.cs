@@ -1,6 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
-using ProdutivAgro.Infrastructure.DataAccess;
+using ProdutivAgro.Infrastructure.Persistence;
 
 namespace ProdutivAgro.Infrastructure.Migrations;
 

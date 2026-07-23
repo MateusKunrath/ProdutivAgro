@@ -5,15 +5,15 @@ using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
-using ProdutivAgro.Infrastructure.DataAccess;
+using ProdutivAgro.Infrastructure.Persistence;
 
 #nullable disable
 
 namespace ProdutivAgro.Infrastructure.Migrations
 {
     [DbContext(typeof(ProdutivAgroDbContext))]
-    [Migration("20260707005721_InitialCreate")]
-    partial class InitialCreate
+    [Migration("20260723230441_InitialStructure")]
+    partial class InitialStructure
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -25,26 +25,14 @@ namespace ProdutivAgro.Infrastructure.Migrations
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
-            modelBuilder.Entity("ProdutivAgro.Domain.Entities.Organization", b =>
+            modelBuilder.Entity("ProdutivAgro.Domain.Identity.Entities.User", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
 
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Organizations");
-                });
-
-            modelBuilder.Entity("ProdutivAgro.Domain.Entities.User", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid");
+                    b.Property<int>("Active")
+                        .HasColumnType("integer");
 
                     b.Property<string>("Email")
                         .IsRequired()
@@ -52,7 +40,8 @@ namespace ProdutivAgro.Infrastructure.Migrations
 
                     b.Property<string>("Name")
                         .IsRequired()
-                        .HasColumnType("text");
+                        .HasMaxLength(150)
+                        .HasColumnType("character varying(150)");
 
                     b.Property<Guid>("OrganizationId")
                         .HasColumnType("uuid");
@@ -61,26 +50,41 @@ namespace ProdutivAgro.Infrastructure.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<string>("Phone")
-                        .IsRequired()
-                        .HasColumnType("text");
+                    b.Property<int>("Role")
+                        .HasColumnType("integer");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("OrganizationId");
-
-                    b.ToTable("Users");
+                    b.ToTable("Users", (string)null);
                 });
 
-            modelBuilder.Entity("ProdutivAgro.Domain.Entities.User", b =>
+            modelBuilder.Entity("ProdutivAgro.Domain.Products.Entities.Product", b =>
                 {
-                    b.HasOne("ProdutivAgro.Domain.Entities.Organization", "Organization")
-                        .WithMany()
-                        .HasForeignKey("OrganizationId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
 
-                    b.Navigation("Organization");
+                    b.Property<bool>("Active")
+                        .HasColumnType("boolean");
+
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasMaxLength(150)
+                        .HasColumnType("character varying(150)");
+
+                    b.Property<Guid>("OrganizationId")
+                        .HasColumnType("uuid");
+
+                    b.Property<int>("Unit")
+                        .HasColumnType("integer");
+
+                    b.Property<decimal>("UnitPrice")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("numeric(18,2)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Products", (string)null);
                 });
 #pragma warning restore 612, 618
         }

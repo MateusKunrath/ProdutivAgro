@@ -1,6 +1,6 @@
 using ProdutivAgro.Domain.Identity.Enums;
 
-namespace ProdutivAgro.Application.Common.Security;
+namespace ProdutivAgro.Application.Abstractions.Authentication;
 
 public interface ICurrentUser
 {

@@ -17,6 +17,7 @@
 
     <ItemGroup>
         <ProjectReference Include="..\ProdutivAgro.Application\ProdutivAgro.Application.csproj"/>
+        <ProjectReference Include="..\ProdutivAgro.Communication\ProdutivAgro.Communication.csproj"/>
         <ProjectReference Include="..\ProdutivAgro.Infrastructure\ProdutivAgro.Infrastructure.csproj"/>
     </ItemGroup>
 

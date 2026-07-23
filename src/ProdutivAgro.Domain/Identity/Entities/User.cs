@@ -11,4 +11,9 @@ public class User : AggregateRoot
     public Guid OrganizationId { get; private set; }
     public UserRole Role { get; private set; } = UserRole.TeamMember;
     public UserStatus Active { get; private set; } = UserStatus.Active;
+
+    public void SetPasswordHash(string passwordHash)
+    {
+        Password = passwordHash;
+    }
 }

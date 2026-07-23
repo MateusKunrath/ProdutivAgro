@@ -1,4 +1,4 @@
-using ProdutivAgro.Domain.Security.Tokens;
+using ProdutivAgro.Application.Abstractions.Authentication;
 
 namespace ProdutivAgro.Api.Token;
 

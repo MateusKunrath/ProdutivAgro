@@ -1,4 +1,4 @@
-using ProdutivAgro.Domain.Repositories;
+using ProdutivAgro.Application.Abstractions.Persistence;
 
 namespace ProdutivAgro.Infrastructure.Persistence;
 

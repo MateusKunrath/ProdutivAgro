@@ -1,8 +1,6 @@
-using MediatR;
+namespace ProdutivAgro.Api.Contracts.Identity;
 
-namespace ProdutivAgro.Application.Identity.Commands.Register;
-
-public sealed class RegisterCommand : IRequest<RegisterResult>
+public sealed class RegisterRequest
 {
     public string Name { get; init; } = string.Empty;
     public string Email { get; init; } = string.Empty;

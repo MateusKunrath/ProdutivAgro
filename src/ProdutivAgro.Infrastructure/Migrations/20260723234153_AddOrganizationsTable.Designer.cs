@@ -5,15 +5,15 @@ using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
-using ProdutivAgro.Infrastructure.DataAccess;
+using ProdutivAgro.Infrastructure.Persistence;
 
 #nullable disable
 
 namespace ProdutivAgro.Infrastructure.Migrations
 {
     [DbContext(typeof(ProdutivAgroDbContext))]
-    [Migration("20260717000210_AdjustsUserTable")]
-    partial class AdjustsUserTable
+    [Migration("20260723234153_AddOrganizationsTable")]
+    partial class AddOrganizationsTable
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -25,29 +25,40 @@ namespace ProdutivAgro.Infrastructure.Migrations
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
-            modelBuilder.Entity("ProdutivAgro.Domain.Entities.Organization", b =>
+            modelBuilder.Entity("ProdutivAgro.Domain.Identity.Entities.Organization", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
 
+                    b.Property<bool>("Active")
+                        .HasColumnType("boolean");
+
                     b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(150)
+                        .HasColumnType("character varying(150)");
+
+                    b.Property<string>("Slug")
                         .IsRequired()
                         .HasColumnType("text");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("Name")
+                    b.HasIndex("Slug")
                         .IsUnique();
 
-                    b.ToTable("Organizations");
+                    b.ToTable("Organizations", (string)null);
                 });
 
-            modelBuilder.Entity("ProdutivAgro.Domain.Entities.User", b =>
+            modelBuilder.Entity("ProdutivAgro.Domain.Identity.Entities.User", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
+
+                    b.Property<int>("Active")
+                        .HasColumnType("integer");
 
                     b.Property<string>("Email")
                         .IsRequired()
@@ -55,7 +66,8 @@ namespace ProdutivAgro.Infrastructure.Migrations
 
                     b.Property<string>("Name")
                         .IsRequired()
-                        .HasColumnType("text");
+                        .HasMaxLength(150)
+                        .HasColumnType("character varying(150)");
 
                     b.Property<Guid>("OrganizationId")
                         .HasColumnType("uuid");
@@ -64,9 +76,8 @@ namespace ProdutivAgro.Infrastructure.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<string>("PhoneNumber")
-                        .IsRequired()
-                        .HasColumnType("text");
+                    b.Property<int>("Role")
+                        .HasColumnType("integer");
 
                     b.HasKey("Id");
 
@@ -75,21 +86,45 @@ namespace ProdutivAgro.Infrastructure.Migrations
 
                     b.HasIndex("OrganizationId");
 
-                    b.HasIndex("PhoneNumber")
-                        .IsUnique();
-
-                    b.ToTable("Users");
+                    b.ToTable("Users", (string)null);
                 });
 
-            modelBuilder.Entity("ProdutivAgro.Domain.Entities.User", b =>
+            modelBuilder.Entity("ProdutivAgro.Domain.Products.Entities.Product", b =>
                 {
-                    b.HasOne("ProdutivAgro.Domain.Entities.Organization", "Organization")
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<bool>("Active")
+                        .HasColumnType("boolean");
+
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasMaxLength(150)
+                        .HasColumnType("character varying(150)");
+
+                    b.Property<Guid>("OrganizationId")
+                        .HasColumnType("uuid");
+
+                    b.Property<int>("Unit")
+                        .HasColumnType("integer");
+
+                    b.Property<decimal>("UnitPrice")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("numeric(18,2)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Products", (string)null);
+                });
+
+            modelBuilder.Entity("ProdutivAgro.Domain.Identity.Entities.User", b =>
+                {
+                    b.HasOne("ProdutivAgro.Domain.Identity.Entities.Organization", null)
                         .WithMany()
                         .HasForeignKey("OrganizationId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-
-                    b.Navigation("Organization");
                 });
 #pragma warning restore 612, 618
         }

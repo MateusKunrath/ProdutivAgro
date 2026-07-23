@@ -1,7 +1,7 @@
 using ProdutivAgro.Api.Extensions;
 using ProdutivAgro.Api.Token;
 using ProdutivAgro.Application;
-using ProdutivAgro.Domain.Security.Tokens;
+using ProdutivAgro.Application.Abstractions.Authentication;
 using ProdutivAgro.Infrastructure;
 using ProdutivAgro.Infrastructure.Extensions;
 using ProdutivAgro.Infrastructure.Migrations;

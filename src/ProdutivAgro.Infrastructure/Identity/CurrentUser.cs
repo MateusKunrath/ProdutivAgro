@@ -1,6 +1,6 @@
 using System.Security.Claims;
 using Microsoft.AspNetCore.Http;
-using ProdutivAgro.Application.Common.Security;
+using ProdutivAgro.Application.Abstractions.Authentication;
 using ProdutivAgro.Domain.Identity.Enums;
 
 namespace ProdutivAgro.Infrastructure.Identity;

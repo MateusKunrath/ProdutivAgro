@@ -2,14 +2,13 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
 using Microsoft.IdentityModel.Tokens;
-using ProdutivAgro.Application.Common.Security;
+using ProdutivAgro.Application.Abstractions.Authentication;
 using ProdutivAgro.Domain.Identity.Entities;
 using ProdutivAgro.Domain.Identity.Extensions;
-using ProdutivAgro.Domain.Security.Tokens;
 
 namespace ProdutivAgro.Infrastructure.Identity.Jwt;
 
-public class JwtTokenGenerator(uint expirationTimeInMinutes, string signingKey) : IAccessTokenGenerator
+public class JwtTokenGenerator(uint expirationTimeInMinutes, string signingKey) : IJwtTokenGenerator
 {
     public string Generate(User user)
     {

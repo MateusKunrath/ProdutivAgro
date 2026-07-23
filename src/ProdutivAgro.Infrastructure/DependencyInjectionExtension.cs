@@ -1,14 +1,15 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using ProdutivAgro.Application.Common.Security;
+using ProdutivAgro.Application.Abstractions.Authentication;
+using ProdutivAgro.Application.Abstractions.Persistence;
+using ProdutivAgro.Domain.Identity.Repositories;
 using ProdutivAgro.Domain.Identity.Services;
 using ProdutivAgro.Domain.Products.Repositories;
-using ProdutivAgro.Domain.Repositories;
-using ProdutivAgro.Domain.Security.Tokens;
 using ProdutivAgro.Infrastructure.Identity;
 using ProdutivAgro.Infrastructure.Identity.Jwt;
 using ProdutivAgro.Infrastructure.Identity.Password;
+using ProdutivAgro.Infrastructure.Identity.Persistence.Repositories;
 using ProdutivAgro.Infrastructure.Persistence;
 using ProdutivAgro.Infrastructure.Repositories;
 
@@ -31,7 +32,7 @@ public static class DependencyInjectionExtension
         var expirationTimeInMinutes = configuration.GetValue<uint>("Settings:Jwt:ExpiresMinutes");
         var signingKey = configuration.GetValue<string>("Settings:Jwt:SigningKey");
 
-        services.AddScoped<IAccessTokenGenerator>(_ => new JwtTokenGenerator(expirationTimeInMinutes, signingKey!));
+        services.AddScoped<IJwtTokenGenerator>(_ => new JwtTokenGenerator(expirationTimeInMinutes, signingKey!));
     }
 
     private static void AddRepositories(IServiceCollection services)
@@ -40,7 +41,7 @@ public static class DependencyInjectionExtension
 
         AddProductsRepository(services);
         // AddOrganizationsRepository(services);
-        // AddUsersRepository(services);
+        AddUsersRepository(services);
     }
 
     private static void AddDbContext(IServiceCollection services, IConfiguration configuration)
@@ -56,12 +57,12 @@ public static class DependencyInjectionExtension
     //     services.AddScoped<IOrganizationsWriteOnlyRepository, OrganizationsRepository>();
     //     services.AddScoped<IOrganizationsUpdateOnlyRepository, OrganizationsRepository>();
     // }
-    //
-    // private static void AddUsersRepository(IServiceCollection services)
-    // {
-    //     services.AddScoped<IUsersReadOnlyRepository, UsersRepository>();
-    //     services.AddScoped<IUsersWriteOnlyRepository, UsersRepository>();
-    // }
+
+    private static void AddUsersRepository(IServiceCollection services)
+    {
+        services.AddScoped<IUsersReadOnlyRepository, UsersRepository>();
+        services.AddScoped<IUsersWriteOnlyRepository, UsersRepository>();
+    }
 
     private static void AddProductsRepository(IServiceCollection services)
     {

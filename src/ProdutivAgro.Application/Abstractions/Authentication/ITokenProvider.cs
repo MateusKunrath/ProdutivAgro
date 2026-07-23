@@ -1,4 +1,4 @@
-namespace ProdutivAgro.Domain.Security.Tokens;
+namespace ProdutivAgro.Application.Abstractions.Authentication;
 
 public interface ITokenProvider
 {

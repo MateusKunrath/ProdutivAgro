@@ -1,4 +1,4 @@
-namespace ProdutivAgro.Application.Common.Security;
+namespace ProdutivAgro.Application.Abstractions.Authentication;
 
 public static class CustomClaims
 {
