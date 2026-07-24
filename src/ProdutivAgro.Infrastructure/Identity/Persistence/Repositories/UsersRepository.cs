@@ -9,7 +9,7 @@ public class UsersRepository(ProdutivAgroDbContext dbContext) : IUsersReadOnlyRe
 {
     public async Task<User?> GetByIdAsync(Guid id, CancellationToken cancellationToken)
     {
-        return await dbContext.Users.FirstOrDefaultAsync(x => x.Id.Equals(id), cancellationToken);
+        return await dbContext.Users.AsNoTracking().FirstOrDefaultAsync(x => x.Id.Equals(id), cancellationToken);
     }
 
     public Task<User?> GetByEmailAsync(string email, CancellationToken cancellationToken)
@@ -17,13 +17,13 @@ public class UsersRepository(ProdutivAgroDbContext dbContext) : IUsersReadOnlyRe
         throw new NotImplementedException();
     }
 
-    public Task<bool> ExistsUserWithSameEmailAsync(string email, CancellationToken cancellationToken)
+    public async Task<bool> ExistsUserWithSameEmailAsync(string email, CancellationToken cancellationToken)
     {
-        throw new NotImplementedException();
+        return await dbContext.Users.AsNoTracking().AnyAsync(x => x.Email.Equals(email), cancellationToken);
     }
 
-    public Task AddAsync(User user)
+    public async Task AddAsync(User user)
     {
-        throw new NotImplementedException();
+        await dbContext.Users.AddAsync(user);
     }
 }

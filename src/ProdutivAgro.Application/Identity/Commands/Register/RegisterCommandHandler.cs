@@ -4,6 +4,7 @@ using MediatR;
 using ProdutivAgro.Application.Abstractions.Authentication;
 using ProdutivAgro.Application.Abstractions.Persistence;
 using ProdutivAgro.Domain.Identity.Entities;
+using ProdutivAgro.Domain.Identity.Enums;
 using ProdutivAgro.Domain.Identity.Repositories;
 using ProdutivAgro.Domain.Identity.Services;
 using ProdutivAgro.Exception;
@@ -14,6 +15,7 @@ namespace ProdutivAgro.Application.Identity.Commands.Register;
 public class RegisterCommandHandler(
     IUsersReadOnlyRepository usersReadOnlyRepository,
     IUsersWriteOnlyRepository usersWriteOnlyRepository,
+    IOrganizationsWriteOnlyRepository organizationsWriteOnlyRepository,
     IMapper mapper,
     IPasswordEncrypter passwordEncrypter,
     IJwtTokenGenerator jwtTokenGenerator,
@@ -23,10 +25,15 @@ public class RegisterCommandHandler(
     {
         await Validate(request, cancellationToken);
 
-        var user = mapper.Map<User>(request);
-        user.SetPasswordHash(passwordEncrypter.Encrypt(request.Password));
+        var organization = new Organization(request.OrganizationName);
+        await organizationsWriteOnlyRepository.AddAsync(organization, cancellationToken);
 
+        var user = mapper.Map<User>(request);
+        user.SetOrganization(organization);
+        user.SetPasswordHash(passwordEncrypter.Encrypt(request.Password));
+        user.SetRole(UserRole.Administrator);
         await usersWriteOnlyRepository.AddAsync(user);
+
         await unitOfWork.Commit();
 
         return new RegisterResult
@@ -36,12 +43,11 @@ public class RegisterCommandHandler(
         };
     }
 
-    private static async Task Validate(RegisterCommand request, CancellationToken cancellationToken)
+    private async Task Validate(RegisterCommand request, CancellationToken cancellationToken)
     {
         var result = await new RegisterCommandValidator().ValidateAsync(request, cancellationToken);
 
-        var emailExists = false;
-        // await usersReadOnlyRepository.ExistsUserWithSameEmailAsync(request.Email, cancellationToken);
+        var emailExists = await usersReadOnlyRepository.ExistsUserWithSameEmailAsync(request.Email, cancellationToken);
         if (emailExists)
         {
             result.Errors.Add(new ValidationFailure(string.Empty, ResourceErrorMessages.EMAIL_ALREADY_EXISTS));

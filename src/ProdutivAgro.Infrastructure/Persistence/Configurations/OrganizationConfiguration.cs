@@ -12,7 +12,6 @@ public class OrganizationConfiguration : IEntityTypeConfiguration<Organization>
 
         builder.HasKey(x => x.Id);
         builder.Property(x => x.Name).IsRequired().HasMaxLength(150);
-        builder.HasIndex(x => x.Slug).IsUnique();
         builder.Property(x => x.Active).IsRequired();
     }
 }

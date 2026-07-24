@@ -19,8 +19,7 @@ public sealed class IdentityController(IMediator mediator) : ControllerBase
             Name = request.Name,
             Email = request.Email,
             Password = request.Password,
-            Role = request.Role,
-            OrganizationId = request.OrganizationId,
+            OrganizationName = request.OrganizationName,
         };
 
         var result = await mediator.Send(command, cancellationToken);

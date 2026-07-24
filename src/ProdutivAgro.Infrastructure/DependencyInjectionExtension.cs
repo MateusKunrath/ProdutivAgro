@@ -40,7 +40,7 @@ public static class DependencyInjectionExtension
         services.AddScoped<IUnitOfWork, UnitOfWork>();
 
         AddProductsRepository(services);
-        // AddOrganizationsRepository(services);
+        AddOrganizationsRepository(services);
         AddUsersRepository(services);
     }
 
@@ -51,12 +51,12 @@ public static class DependencyInjectionExtension
             options.UseNpgsql(connectionString, b => b.MigrationsAssembly("ProdutivAgro.Infrastructure")));
     }
 
-    // private static void AddOrganizationsRepository(IServiceCollection services)
-    // {
-    //     services.AddScoped<IOrganizationsReadOnlyRepository, OrganizationsRepository>();
-    //     services.AddScoped<IOrganizationsWriteOnlyRepository, OrganizationsRepository>();
-    //     services.AddScoped<IOrganizationsUpdateOnlyRepository, OrganizationsRepository>();
-    // }
+    private static void AddOrganizationsRepository(IServiceCollection services)
+    {
+        // services.AddScoped<IOrganizationsReadOnlyRepository, OrganizationsRepository>();
+        services.AddScoped<IOrganizationsWriteOnlyRepository, OrganizationsRepository>();
+        // services.AddScoped<IOrganizationsUpdateOnlyRepository, OrganizationsRepository>();
+    }
 
     private static void AddUsersRepository(IServiceCollection services)
     {

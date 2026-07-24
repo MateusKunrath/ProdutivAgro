@@ -9,7 +9,8 @@ public static class UserRoleExtensions
         return userRole switch
         {
             UserRole.Administrator => nameof(UserRole.Administrator),
-            UserRole.TeamMember => nameof(UserRole.TeamMember),
+            UserRole.Manager => nameof(UserRole.Manager),
+            UserRole.Employee => nameof(UserRole.Employee),
             _ => string.Empty,
         };
     }
