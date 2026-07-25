@@ -27,11 +27,14 @@ public sealed class ChangePasswordCommandHandler(
         await Validate(request, user, cancellationToken);
 
         user.SetPasswordHash(passwordEncrypter.Encrypt(request.NewPassword));
-        usersUpdateReadOnlyRepository.Update(user);
 
-        await refreshTokensUpdateOnlyRepository.RevokeAllActiveByUserIdAsync(currentUser.UserId, cancellationToken);
+        await unitOfWork.ExecuteInTransactionAsync(async cancelToken =>
+        {
+            usersUpdateReadOnlyRepository.Update(user);
 
-        await unitOfWork.Commit();
+            await refreshTokensUpdateOnlyRepository.RevokeAllActiveByUserIdAsync(currentUser.UserId, cancelToken);
+        }, cancellationToken);
+
         return Unit.Value;
     }
 
