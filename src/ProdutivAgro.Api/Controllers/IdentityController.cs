@@ -2,6 +2,7 @@ using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using ProdutivAgro.Api.Contracts.Identity;
 using ProdutivAgro.Application.Identity.Commands.Register;
+using ProdutivAgro.Application.Identity.Commands.RefreshAccessToken;
 
 namespace ProdutivAgro.Api.Controllers;
 
@@ -25,5 +26,18 @@ public sealed class IdentityController(IMediator mediator) : ControllerBase
         var result = await mediator.Send(command, cancellationToken);
 
         return Created(string.Empty, result);
+    }
+
+    [HttpPost("refresh")]
+    public async Task<IActionResult> RefreshAccessToken(
+        RefreshAccessTokenRequest request,
+        CancellationToken cancellationToken)
+    {
+        var result = await mediator.Send(new RefreshAccessTokenCommand
+        {
+            RefreshToken = request.RefreshToken,
+        }, cancellationToken);
+
+        return Ok(result);
     }
 }

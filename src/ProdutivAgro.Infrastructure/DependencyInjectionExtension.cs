@@ -9,6 +9,7 @@ using ProdutivAgro.Domain.Products.Repositories;
 using ProdutivAgro.Infrastructure.Identity;
 using ProdutivAgro.Infrastructure.Identity.Jwt;
 using ProdutivAgro.Infrastructure.Identity.Password;
+using ProdutivAgro.Infrastructure.Identity.RefreshTokens;
 using ProdutivAgro.Infrastructure.Identity.Persistence.Repositories;
 using ProdutivAgro.Infrastructure.Persistence;
 using ProdutivAgro.Infrastructure.Repositories;
@@ -31,8 +32,10 @@ public static class DependencyInjectionExtension
     {
         var expirationTimeInMinutes = configuration.GetValue<uint>("Settings:Jwt:ExpiresMinutes");
         var signingKey = configuration.GetValue<string>("Settings:Jwt:SigningKey");
+        var refreshTokenExpirationDays = configuration.GetValue<uint>("Settings:RefreshToken:ExpiresDays", 30);
 
         services.AddScoped<IJwtTokenGenerator>(_ => new JwtTokenGenerator(expirationTimeInMinutes, signingKey!));
+        services.AddSingleton<IRefreshTokenService>(_ => new RefreshTokenService(refreshTokenExpirationDays));
     }
 
     private static void AddRepositories(IServiceCollection services)
@@ -42,6 +45,7 @@ public static class DependencyInjectionExtension
         AddProductsRepository(services);
         AddOrganizationsRepository(services);
         AddUsersRepository(services);
+        services.AddScoped<IRefreshTokenRepository, RefreshTokenRepository>();
     }
 
     private static void AddDbContext(IServiceCollection services, IConfiguration configuration)
