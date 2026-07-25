@@ -137,4 +137,10 @@
     <data name="ORGANIZATION_NAME_EMPTY" xml:space="preserve">
         <value>Organization is required.</value>
     </data>
+    <data name="USER_NOT_FOUND" xml:space="preserve">
+        <value>User not found.</value>
+    </data>
+    <data name="PASSWORD_DIFFERENT_CURRENT_PASSWORD" xml:space="preserve">
+        <value>The entered password is different from the current password.</value>
+    </data>
 </root>

@@ -5,23 +5,36 @@ using ProdutivAgro.Infrastructure.Persistence;
 
 namespace ProdutivAgro.Infrastructure.Identity.Persistence.Repositories;
 
-public class UsersRepository(ProdutivAgroDbContext dbContext) : IUsersReadOnlyRepository, IUsersWriteOnlyRepository
+public class UsersRepository(ProdutivAgroDbContext dbContext)
+    : IUsersReadOnlyRepository, IUsersWriteOnlyRepository, IUsersUpdateReadOnlyRepository
 {
-    public async Task<User?> GetByIdAsync(Guid id, CancellationToken cancellationToken)
+    async Task<User?> IUsersReadOnlyRepository.GetByIdAsync(Guid id, CancellationToken cancellationToken)
     {
         return await dbContext.Users.AsNoTracking().FirstOrDefaultAsync(x => x.Id.Equals(id), cancellationToken);
     }
 
-    public Task<User?> GetByEmailAsync(string email, CancellationToken cancellationToken) =>
-        dbContext.Users.AsNoTracking().FirstOrDefaultAsync(x => x.Email == email, cancellationToken);
+    public Task<User?> GetByEmailAsync(string email, CancellationToken cancellationToken)
+    {
+        return dbContext.Users.AsNoTracking().FirstOrDefaultAsync(x => x.Email == email, cancellationToken);
+    }
 
     public async Task<bool> ExistsUserWithSameEmailAsync(string email, CancellationToken cancellationToken)
     {
         return await dbContext.Users.AsNoTracking().AnyAsync(x => x.Email.Equals(email), cancellationToken);
     }
 
+    async Task<User?> IUsersUpdateReadOnlyRepository.GetByIdAsync(Guid id, CancellationToken cancellationToken)
+    {
+        return await dbContext.Users.FirstOrDefaultAsync(x => x.Id.Equals(id), cancellationToken);
+    }
+
     public async Task AddAsync(User user)
     {
         await dbContext.Users.AddAsync(user);
+    }
+
+    public void Update(User user)
+    {
+        dbContext.Users.Update(user);
     }
 }
