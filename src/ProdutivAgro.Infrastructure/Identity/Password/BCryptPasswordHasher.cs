@@ -1,4 +1,4 @@
-using ProdutivAgro.Domain.Identity.Services;
+using ProdutivAgro.Application.Abstractions.Authentication;
 using BC = BCrypt.Net.BCrypt;
 
 namespace ProdutivAgro.Infrastructure.Identity.Password;

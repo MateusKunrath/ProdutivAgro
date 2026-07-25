@@ -1,4 +1,4 @@
-namespace ProdutivAgro.Domain.Identity.Services;
+namespace ProdutivAgro.Application.Abstractions.Authentication;
 
 public interface IPasswordEncrypter
 {

@@ -12,10 +12,8 @@ public class UsersRepository(ProdutivAgroDbContext dbContext) : IUsersReadOnlyRe
         return await dbContext.Users.AsNoTracking().FirstOrDefaultAsync(x => x.Id.Equals(id), cancellationToken);
     }
 
-    public Task<User?> GetByEmailAsync(string email, CancellationToken cancellationToken)
-    {
-        throw new NotImplementedException();
-    }
+    public Task<User?> GetByEmailAsync(string email, CancellationToken cancellationToken) =>
+        dbContext.Users.AsNoTracking().FirstOrDefaultAsync(x => x.Email == email, cancellationToken);
 
     public async Task<bool> ExistsUserWithSameEmailAsync(string email, CancellationToken cancellationToken)
     {

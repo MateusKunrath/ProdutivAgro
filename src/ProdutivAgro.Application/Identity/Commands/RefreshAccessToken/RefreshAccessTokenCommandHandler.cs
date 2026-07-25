@@ -4,11 +4,14 @@ using ProdutivAgro.Application.Abstractions.Persistence;
 using ProdutivAgro.Domain.Identity.Entities;
 using ProdutivAgro.Domain.Identity.Enums;
 using ProdutivAgro.Domain.Identity.Repositories;
+using ProdutivAgro.Exception.ExceptionsBase;
 
 namespace ProdutivAgro.Application.Identity.Commands.RefreshAccessToken;
 
 public sealed class RefreshAccessTokenCommandHandler(
-    IRefreshTokenRepository refreshTokenRepository,
+    IRefreshTokensReadOnlyRepository refreshTokensReadOnlyRepository,
+    IRefreshTokensWriteOnlyRepository refreshTokensWriteOnlyRepository,
+    IRefreshTokensUpdateOnlyRepository refreshTokensUpdateOnlyRepository,
     IUsersReadOnlyRepository usersReadOnlyRepository,
     IRefreshTokenService refreshTokenService,
     IJwtTokenGenerator jwtTokenGenerator,
@@ -19,21 +22,21 @@ public sealed class RefreshAccessTokenCommandHandler(
     {
         if (string.IsNullOrWhiteSpace(request.RefreshToken))
         {
-            throw new UnauthorizedAccessException();
+            throw new InvalidAuthenticationException();
         }
 
         var tokenHash = refreshTokenService.Hash(request.RefreshToken);
-        var currentToken = await refreshTokenRepository.GetByTokenHashAsync(tokenHash, cancellationToken);
+        var currentToken = await refreshTokensReadOnlyRepository.GetByTokenHashAsync(tokenHash, cancellationToken);
 
         if (currentToken is null || !currentToken.IsUsable(DateTimeOffset.UtcNow))
         {
-            throw new UnauthorizedAccessException();
+            throw new InvalidAuthenticationException();
         }
 
         var user = await usersReadOnlyRepository.GetByIdAsync(currentToken.UserId, cancellationToken);
         if (user is null || user.Active != UserStatus.Active)
         {
-            throw new UnauthorizedAccessException();
+            throw new InvalidAuthenticationException();
         }
 
         var rawReplacementToken = refreshTokenService.Generate();
@@ -43,7 +46,8 @@ public sealed class RefreshAccessTokenCommandHandler(
             refreshTokenService.GetExpirationDate(DateTimeOffset.UtcNow));
 
         currentToken.Revoke(replacementToken.Id);
-        await refreshTokenRepository.AddAsync(replacementToken, cancellationToken);
+        refreshTokensUpdateOnlyRepository.Update(currentToken);
+        await refreshTokensWriteOnlyRepository.AddAsync(replacementToken, cancellationToken);
         await unitOfWork.Commit();
 
         return new RefreshAccessTokenResult

@@ -6,7 +6,6 @@ using ProdutivAgro.Application.Abstractions.Persistence;
 using ProdutivAgro.Domain.Identity.Entities;
 using ProdutivAgro.Domain.Identity.Enums;
 using ProdutivAgro.Domain.Identity.Repositories;
-using ProdutivAgro.Domain.Identity.Services;
 using ProdutivAgro.Exception;
 using ProdutivAgro.Exception.ExceptionsBase;
 

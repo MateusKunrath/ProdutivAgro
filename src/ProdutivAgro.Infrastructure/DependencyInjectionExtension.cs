@@ -4,13 +4,12 @@ using Microsoft.Extensions.DependencyInjection;
 using ProdutivAgro.Application.Abstractions.Authentication;
 using ProdutivAgro.Application.Abstractions.Persistence;
 using ProdutivAgro.Domain.Identity.Repositories;
-using ProdutivAgro.Domain.Identity.Services;
 using ProdutivAgro.Domain.Products.Repositories;
 using ProdutivAgro.Infrastructure.Identity;
 using ProdutivAgro.Infrastructure.Identity.Jwt;
 using ProdutivAgro.Infrastructure.Identity.Password;
-using ProdutivAgro.Infrastructure.Identity.RefreshTokens;
 using ProdutivAgro.Infrastructure.Identity.Persistence.Repositories;
+using ProdutivAgro.Infrastructure.Identity.RefreshTokens;
 using ProdutivAgro.Infrastructure.Persistence;
 using ProdutivAgro.Infrastructure.Repositories;
 
@@ -45,7 +44,7 @@ public static class DependencyInjectionExtension
         AddProductsRepository(services);
         AddOrganizationsRepository(services);
         AddUsersRepository(services);
-        services.AddScoped<IRefreshTokenRepository, RefreshTokenRepository>();
+        AddRefreshTokensRepository(services);
     }
 
     private static void AddDbContext(IServiceCollection services, IConfiguration configuration)
@@ -71,5 +70,12 @@ public static class DependencyInjectionExtension
     private static void AddProductsRepository(IServiceCollection services)
     {
         services.AddScoped<IProductsReadOnlyRepository, ProductsRepository>();
+    }
+
+    private static void AddRefreshTokensRepository(IServiceCollection services)
+    {
+        services.AddScoped<IRefreshTokensReadOnlyRepository, RefreshTokenRepository>();
+        services.AddScoped<IRefreshTokensWriteOnlyRepository, RefreshTokenRepository>();
+        services.AddScoped<IRefreshTokensUpdateOnlyRepository, RefreshTokenRepository>();
     }
 }
