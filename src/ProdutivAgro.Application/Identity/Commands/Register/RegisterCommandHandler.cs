@@ -18,6 +18,8 @@ public class RegisterCommandHandler(
     IMapper mapper,
     IPasswordEncrypter passwordEncrypter,
     IJwtTokenGenerator jwtTokenGenerator,
+    IRefreshTokenService refreshTokenService,
+    IRefreshTokensWriteOnlyRepository refreshTokensWriteOnlyRepository,
     IUnitOfWork unitOfWork) : IRequestHandler<RegisterCommand, RegisterResult>
 {
     public async Task<RegisterResult> Handle(RegisterCommand request, CancellationToken cancellationToken)
@@ -33,12 +35,20 @@ public class RegisterCommandHandler(
         user.SetRole(UserRole.Administrator);
         await usersWriteOnlyRepository.AddAsync(user);
 
+        var rawRefreshToken = refreshTokenService.Generate();
+        var refreshToken = new RefreshToken(
+            user.Id,
+            refreshTokenService.Hash(rawRefreshToken),
+            refreshTokenService.GetExpirationDate(DateTimeOffset.UtcNow));
+
+        await refreshTokensWriteOnlyRepository.AddAsync(refreshToken, cancellationToken);
         await unitOfWork.Commit();
 
         return new RegisterResult
         {
             Name = user.Name,
-            Token = jwtTokenGenerator.Generate(user),
+            AccessToken = jwtTokenGenerator.Generate(user),
+            RefreshToken = rawRefreshToken,
         };
     }
 
