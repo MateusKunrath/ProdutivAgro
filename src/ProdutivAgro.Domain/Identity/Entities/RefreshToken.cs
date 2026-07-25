@@ -26,7 +26,7 @@ public sealed class RefreshToken : Entity
         return RevokedAt is null && ExpiresAt > now;
     }
 
-    public void Revoke(Guid replacementTokenId)
+    public void Revoke(Guid? replacementTokenId = null)
     {
         RevokedAt = DateTimeOffset.UtcNow;
         ReplacedByTokenId = replacementTokenId;

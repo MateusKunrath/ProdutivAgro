@@ -2,8 +2,10 @@ using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using ProdutivAgro.Api.Contracts.Identity;
 using ProdutivAgro.Application.Identity.Commands.Login;
+using ProdutivAgro.Application.Identity.Commands.Logout;
 using ProdutivAgro.Application.Identity.Commands.RefreshAccessToken;
 using ProdutivAgro.Application.Identity.Commands.Register;
+using ProdutivAgro.Communication.Responses;
 
 namespace ProdutivAgro.Api.Controllers;
 
@@ -11,7 +13,10 @@ namespace ProdutivAgro.Api.Controllers;
 [ApiController]
 public sealed class IdentityController(IMediator mediator) : ControllerBase
 {
-    [HttpPost("login")]
+    [HttpPost]
+    [Route("Login")]
+    [ProducesResponseType(typeof(LoginResult), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ResponseErrorJson), StatusCodes.Status401Unauthorized)]
     public async Task<IActionResult> Login(LoginRequest request, CancellationToken cancellationToken)
     {
         var result = await mediator.Send(new LoginCommand
@@ -23,10 +28,11 @@ public sealed class IdentityController(IMediator mediator) : ControllerBase
         return Ok(result);
     }
 
-    [HttpPost("register")]
-    public async Task<IActionResult> Register(
-        RegisterRequest request,
-        CancellationToken cancellationToken)
+    [HttpPost]
+    [Route("Register")]
+    [ProducesResponseType(typeof(RegisterResult), StatusCodes.Status201Created)]
+    [ProducesResponseType(typeof(ResponseErrorJson), StatusCodes.Status400BadRequest)]
+    public async Task<IActionResult> Register(RegisterRequest request, CancellationToken cancellationToken)
     {
         var result = await mediator.Send(new RegisterCommand
         {
@@ -39,9 +45,11 @@ public sealed class IdentityController(IMediator mediator) : ControllerBase
         return Created(string.Empty, result);
     }
 
-    [HttpPost("refresh")]
-    public async Task<IActionResult> RefreshAccessToken(
-        RefreshAccessTokenRequest request,
+    [HttpPost]
+    [Route("RefreshAccessToken")]
+    [ProducesResponseType(typeof(RefreshAccessTokenResult), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ResponseErrorJson), StatusCodes.Status401Unauthorized)]
+    public async Task<IActionResult> RefreshAccessToken(RefreshAccessTokenRequest request,
         CancellationToken cancellationToken)
     {
         var result = await mediator.Send(new RefreshAccessTokenCommand
@@ -50,5 +58,18 @@ public sealed class IdentityController(IMediator mediator) : ControllerBase
         }, cancellationToken);
 
         return Ok(result);
+    }
+
+    [HttpPost]
+    [Route("Logout")]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    public async Task<IActionResult> Logout(LogoutRequest request, CancellationToken cancellationToken)
+    {
+        await mediator.Send(new LogoutCommand
+        {
+            RefreshToken = request.RefreshToken,
+        }, cancellationToken);
+
+        return NoContent();
     }
 }
