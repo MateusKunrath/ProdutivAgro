@@ -9,7 +9,7 @@ public sealed class LogoutCommandHandler(
     IRefreshTokensReadOnlyRepository refreshTokensReadOnlyRepository,
     IRefreshTokensUpdateOnlyRepository refreshTokensUpdateOnlyRepository,
     IRefreshTokenService refreshTokenService,
-    IUnitOfWork unitOfWork)
+    IUnitOfWork unitOfWork) : IRequestHandler<LogoutCommand, Unit>
 {
     public async Task<Unit> Handle(LogoutCommand request, CancellationToken cancellationToken)
     {
