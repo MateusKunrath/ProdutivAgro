@@ -42,7 +42,12 @@ public class RegisterCommandHandler(
             refreshTokenService.GetExpirationDate(DateTimeOffset.UtcNow));
 
         await refreshTokensWriteOnlyRepository.AddAsync(refreshToken, cancellationToken);
-        await unitOfWork.Commit();
+        await unitOfWork.ExecuteInTransactionAsync(async _ =>
+        {
+            // The organization must be saved before its first member can reference it.
+            await unitOfWork.Commit();
+            organization.SetResponsibleUser(user.Id);
+        }, cancellationToken);
 
         return new RegisterResult
         {

@@ -13,4 +13,10 @@ public class Organization : AggregateRoot
 
     public string Name { get; private set; } = string.Empty;
     public bool Active { get; private set; } = true;
+    public Guid? ResponsibleUserId { get; private set; }
+
+    public void SetResponsibleUser(Guid userId)
+    {
+        ResponsibleUserId = userId;
+    }
 }

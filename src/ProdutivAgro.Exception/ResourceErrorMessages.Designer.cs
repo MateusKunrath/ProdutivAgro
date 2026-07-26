@@ -105,6 +105,15 @@ namespace ProdutivAgro.Exception {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Only the person responsible for the organization can transfer responsibility for the organization..
+        /// </summary>
+        public static string ONLY_RESPONSIBLE_CAN_TRANSFER_RESPONSABILITY {
+            get {
+                return ResourceManager.GetString("ONLY_RESPONSIBLE_CAN_TRANSFER_RESPONSABILITY", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Organization name already exists..
         /// </summary>
         public static string ORGANIZATION_ALREADY_EXISTS {
@@ -164,6 +173,24 @@ namespace ProdutivAgro.Exception {
         public static string PHONE_NUMBER_INVALID {
             get {
                 return ResourceManager.GetString("PHONE_NUMBER_INVALID", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Responsible is required..
+        /// </summary>
+        public static string RESPONSIBLE_EMPTY {
+            get {
+                return ResourceManager.GetString("RESPONSIBLE_EMPTY", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The new person in charge must be part of the organization..
+        /// </summary>
+        public static string RESPONSIBLE_MUST_BE_PART_OF_THE_ORGANIZATION {
+            get {
+                return ResourceManager.GetString("RESPONSIBLE_MUST_BE_PART_OF_THE_ORGANIZATION", resourceCulture);
             }
         }
         

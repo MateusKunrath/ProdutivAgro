@@ -56,9 +56,9 @@ public static class DependencyInjectionExtension
 
     private static void AddOrganizationsRepository(IServiceCollection services)
     {
-        // services.AddScoped<IOrganizationsReadOnlyRepository, OrganizationsRepository>();
+        services.AddScoped<IOrganizationsReadOnlyRepository, OrganizationsRepository>();
         services.AddScoped<IOrganizationsWriteOnlyRepository, OrganizationsRepository>();
-        // services.AddScoped<IOrganizationsUpdateOnlyRepository, OrganizationsRepository>();
+        services.AddScoped<IOrganizationsUpdateReadOnlyRepository, OrganizationsRepository>();
     }
 
     private static void AddUsersRepository(IServiceCollection services)

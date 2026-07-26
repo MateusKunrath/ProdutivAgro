@@ -143,4 +143,13 @@
     <data name="PASSWORD_DIFFERENT_CURRENT_PASSWORD" xml:space="preserve">
         <value>The entered password is different from the current password.</value>
     </data>
+    <data name="RESPONSIBLE_EMPTY" xml:space="preserve">
+        <value>Responsible is required.</value>
+    </data>
+    <data name="ONLY_RESPONSIBLE_CAN_TRANSFER_RESPONSABILITY" xml:space="preserve">
+        <value>Only the person responsible for the organization can transfer responsibility for the organization.</value>
+    </data>
+    <data name="RESPONSIBLE_MUST_BE_PART_OF_THE_ORGANIZATION" xml:space="preserve">
+        <value>The new person in charge must be part of the organization.</value>
+    </data>
 </root>
