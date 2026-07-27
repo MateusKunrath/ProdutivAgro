@@ -3,7 +3,6 @@ using ProdutivAgro.Application.Abstractions.Authentication;
 using ProdutivAgro.Application.Abstractions.Persistence;
 using ProdutivAgro.Application.Products.Shared.Commands;
 using ProdutivAgro.Application.Products.Shared.Validators;
-using ProdutivAgro.Domain.Identity.Repositories;
 using ProdutivAgro.Domain.Products.Entities;
 using ProdutivAgro.Domain.Products.Enums;
 using ProdutivAgro.Domain.Products.Repositories;
@@ -14,7 +13,6 @@ namespace ProdutivAgro.Application.Products.Commands.CreateProduct;
 
 public class CreateProductCommandHandler(
     IProductsWriteOnlyRepository productsWriteOnlyRepository,
-    IOrganizationsReadOnlyRepository organizationsReadOnlyRepository,
     IUnitOfWork unitOfWork,
     ICurrentUser currentUser) : IRequestHandler<ProductCommand<CreateProductResult>, CreateProductResult>
 {
@@ -23,16 +21,9 @@ public class CreateProductCommandHandler(
     {
         await Validate(request, cancellationToken);
 
-        var organization =
-            await organizationsReadOnlyRepository.GetByIdAsync(currentUser.OrganizationId, cancellationToken);
-        if (organization is null)
-        {
-            throw new NotFoundException(ResourceErrorMessages.ORGANIZATION_NOT_FOUND);
-        }
-
         var unit = Enum.Parse<MeasurementUnit>(request.MeasurementUnit, true);
         var product = new Product(
-            organization.Id,
+            currentUser.OrganizationId,
             request.Description,
             request.UnitPrice,
             unit);

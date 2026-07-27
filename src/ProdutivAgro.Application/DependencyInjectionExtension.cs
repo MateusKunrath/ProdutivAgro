@@ -1,5 +1,6 @@
 using FluentValidation;
 using Microsoft.Extensions.DependencyInjection;
+using ProdutivAgro.Application.Behaviors;
 
 namespace ProdutivAgro.Application;
 
@@ -16,6 +17,7 @@ public static class DependencyInjectionExtension
         services.AddMediatR(config =>
         {
             config.RegisterServicesFromAssembly(typeof(DependencyInjectionExtension).Assembly);
+            config.AddOpenBehavior(typeof(ActiveOrganizationBehavior<,>));
         });
     }
 

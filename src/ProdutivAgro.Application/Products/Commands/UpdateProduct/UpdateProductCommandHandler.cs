@@ -12,20 +12,12 @@ namespace ProdutivAgro.Application.Products.Commands.UpdateProduct;
 
 public class UpdateProductCommandHandler(
     IProductsUpdateOnlyRepository productsUpdateOnlyRepository,
-    IOrganizationsReadOnlyRepository organizationsReadOnlyRepository,
     ICurrentUser currentUser,
     IUnitOfWork unitOfWork
 ) : IRequestHandler<UpdateProductCommand, Unit>
 {
     public async Task<Unit> Handle(UpdateProductCommand request, CancellationToken cancellationToken)
     {
-        var organizationExists =
-            await organizationsReadOnlyRepository.ExistsAndIsActiveAsync(currentUser.OrganizationId, cancellationToken);
-        if (!organizationExists)
-        {
-            throw new NotFoundException(ResourceErrorMessages.ORGANIZATION_NOT_FOUND);
-        }
-
         await Validate(request, cancellationToken);
 
         var product = await productsUpdateOnlyRepository.GetByIdAsync(
