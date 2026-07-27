@@ -71,6 +71,8 @@ public static class DependencyInjectionExtension
     private static void AddProductsRepository(IServiceCollection services)
     {
         services.AddScoped<IProductsReadOnlyRepository, ProductsRepository>();
+        services.AddScoped<IProductsWriteOnlyRepository, ProductsRepository>();
+        services.AddScoped<IProductsUpdateOnlyRepository, ProductsRepository>();
     }
 
     private static void AddRefreshTokensRepository(IServiceCollection services)

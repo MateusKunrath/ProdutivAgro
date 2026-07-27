@@ -152,4 +152,16 @@
     <data name="RESPONSIBLE_MUST_BE_PART_OF_THE_ORGANIZATION" xml:space="preserve">
         <value>The new person in charge must be part of the organization.</value>
     </data>
+    <data name="PRODUCT_DESCRIPTION_EMPTY" xml:space="preserve">
+        <value>Description is required.</value>
+    </data>
+    <data name="UNIT_PRICE_MUST_BE_GREATER_THAN_ZERO" xml:space="preserve">
+        <value>Unit price must be greater than zero.</value>
+    </data>
+    <data name="MEASUREMENT_UNIT_INVALID" xml:space="preserve">
+        <value>Measurement unit is invalid.</value>
+    </data>
+    <data name="PRODUCT_NOT_FOUND" xml:space="preserve">
+        <value>Product not found.</value>
+    </data>
 </root>

@@ -96,6 +96,15 @@ namespace ProdutivAgro.Exception {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Measurement unit is invalid..
+        /// </summary>
+        public static string MEASUREMENT_UNIT_INVALID {
+            get {
+                return ResourceManager.GetString("MEASUREMENT_UNIT_INVALID", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Name is required..
         /// </summary>
         public static string NAME_EMPTY {
@@ -177,6 +186,24 @@ namespace ProdutivAgro.Exception {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Description is required..
+        /// </summary>
+        public static string PRODUCT_DESCRIPTION_EMPTY {
+            get {
+                return ResourceManager.GetString("PRODUCT_DESCRIPTION_EMPTY", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Product not found..
+        /// </summary>
+        public static string PRODUCT_NOT_FOUND {
+            get {
+                return ResourceManager.GetString("PRODUCT_NOT_FOUND", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Responsible is required..
         /// </summary>
         public static string RESPONSIBLE_EMPTY {
@@ -191,6 +218,15 @@ namespace ProdutivAgro.Exception {
         public static string RESPONSIBLE_MUST_BE_PART_OF_THE_ORGANIZATION {
             get {
                 return ResourceManager.GetString("RESPONSIBLE_MUST_BE_PART_OF_THE_ORGANIZATION", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Unit price must be greater than zero..
+        /// </summary>
+        public static string UNIT_PRICE_MUST_BE_GREATER_THAN_ZERO {
+            get {
+                return ResourceManager.GetString("UNIT_PRICE_MUST_BE_GREATER_THAN_ZERO", resourceCulture);
             }
         }
         
