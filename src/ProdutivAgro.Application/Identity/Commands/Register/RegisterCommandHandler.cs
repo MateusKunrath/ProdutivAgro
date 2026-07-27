@@ -1,4 +1,3 @@
-using AutoMapper;
 using FluentValidation.Results;
 using MediatR;
 using ProdutivAgro.Application.Abstractions.Authentication;
@@ -15,7 +14,6 @@ public class RegisterCommandHandler(
     IUsersReadOnlyRepository usersReadOnlyRepository,
     IUsersWriteOnlyRepository usersWriteOnlyRepository,
     IOrganizationsWriteOnlyRepository organizationsWriteOnlyRepository,
-    IMapper mapper,
     IPasswordEncrypter passwordEncrypter,
     IJwtTokenGenerator jwtTokenGenerator,
     IRefreshTokenService refreshTokenService,
@@ -27,13 +25,12 @@ public class RegisterCommandHandler(
         await Validate(request, cancellationToken);
 
         var organization = new Organization(request.OrganizationName);
-        await organizationsWriteOnlyRepository.AddAsync(organization, cancellationToken);
-
-        var user = mapper.Map<User>(request);
-        user.SetOrganization(organization);
+        var user = new User(
+            request.Name,
+            request.Email,
+            organization.Id,
+            UserRole.Administrator);
         user.SetPasswordHash(passwordEncrypter.Encrypt(request.Password));
-        user.SetRole(UserRole.Administrator);
-        await usersWriteOnlyRepository.AddAsync(user);
 
         var rawRefreshToken = refreshTokenService.Generate();
         var refreshToken = new RefreshToken(
@@ -41,11 +38,11 @@ public class RegisterCommandHandler(
             refreshTokenService.Hash(rawRefreshToken),
             refreshTokenService.GetExpirationDate(DateTimeOffset.UtcNow));
 
-        await refreshTokensWriteOnlyRepository.AddAsync(refreshToken, cancellationToken);
-        await unitOfWork.ExecuteInTransactionAsync(async _ =>
+        await unitOfWork.ExecuteInTransactionAsync(async cancelToken =>
         {
-            // The organization must be saved before its first member can reference it.
-            await unitOfWork.Commit();
+            await organizationsWriteOnlyRepository.AddAsync(organization, cancelToken);
+            await usersWriteOnlyRepository.AddAsync(user);
+            await refreshTokensWriteOnlyRepository.AddAsync(refreshToken, cancelToken);
             organization.SetResponsibleUser(user.Id);
         }, cancellationToken);
 
