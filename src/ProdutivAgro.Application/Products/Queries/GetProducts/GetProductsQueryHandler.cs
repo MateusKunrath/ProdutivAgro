@@ -1,8 +1,6 @@
 using MediatR;
 using ProdutivAgro.Application.Abstractions.Authentication;
 using ProdutivAgro.Domain.Products.Repositories;
-using ProdutivAgro.Exception;
-using ProdutivAgro.Exception.ExceptionsBase;
 
 namespace ProdutivAgro.Application.Products.Queries.GetProducts;
 
@@ -33,6 +31,8 @@ public class GetProductsQueryHandler(
                     Description = product.Description,
                     UnitPrice = product.UnitPrice,
                     Active = product.Active,
+                    CreatedAt = product.CreatedAt,
+                    UpdatedAt = product.UpdatedAt,
                 }),
             ],
             PageNumber = pageNumber,

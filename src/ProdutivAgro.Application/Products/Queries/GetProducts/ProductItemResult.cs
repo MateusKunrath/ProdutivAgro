@@ -6,4 +6,6 @@ public sealed class ProductItemResult
     public string Description { get; init; } = string.Empty;
     public decimal UnitPrice { get; init; }
     public bool Active { get; init; }
+    public DateTimeOffset CreatedAt { get; init; }
+    public DateTimeOffset UpdatedAt { get; init; }
 }

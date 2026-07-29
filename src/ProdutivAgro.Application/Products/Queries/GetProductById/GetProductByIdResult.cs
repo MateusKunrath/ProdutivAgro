@@ -6,4 +6,6 @@ public sealed class GetProductByIdResult
     public string Description { get; init; } = string.Empty;
     public decimal UnitPrice { get; init; }
     public string MeasurementUnit { get; init; } = string.Empty;
+    public DateTimeOffset CreatedAt { get; init; }
+    public DateTimeOffset UpdatedAt { get; init; }
 }

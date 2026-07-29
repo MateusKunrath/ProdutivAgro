@@ -25,6 +25,8 @@ public class GetProductByIdQueryHandler(
             Description = product.Description,
             MeasurementUnit = product.Unit.MeasurementUnitToString(),
             UnitPrice = product.UnitPrice,
+            CreatedAt = product.CreatedAt,
+            UpdatedAt = product.UpdatedAt,
         };
     }
 }

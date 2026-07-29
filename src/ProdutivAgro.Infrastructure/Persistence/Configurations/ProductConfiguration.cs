@@ -13,5 +13,7 @@ public class ProductConfiguration : IEntityTypeConfiguration<Product>
         builder.HasKey(x => x.Id);
         builder.Property(x => x.Description).HasMaxLength(150);
         builder.Property(x => x.UnitPrice).HasPrecision(18, 2);
+        builder.Property(x => x.CreatedAt).IsRequired();
+        builder.Property(x => x.UpdatedAt).IsRequired();
     }
 }
