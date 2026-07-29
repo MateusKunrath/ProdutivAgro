@@ -164,4 +164,7 @@
     <data name="PRODUCT_NOT_FOUND" xml:space="preserve">
         <value>Product not found.</value>
     </data>
+    <data name="CURRENT_PASSWORD_EMPTY" xml:space="preserve">
+        <value>Current password is required.</value>
+    </data>
 </root>

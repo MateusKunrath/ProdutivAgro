@@ -60,6 +60,15 @@ namespace ProdutivAgro.Exception {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Current password is required..
+        /// </summary>
+        public static string CURRENT_PASSWORD_EMPTY {
+            get {
+                return ResourceManager.GetString("CURRENT_PASSWORD_EMPTY", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Email already exists..
         /// </summary>
         public static string EMAIL_ALREADY_EXISTS {
