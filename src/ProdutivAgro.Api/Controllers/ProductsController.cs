@@ -5,6 +5,7 @@ using ProdutivAgro.Api.Contracts.Products;
 using ProdutivAgro.Application.Products.Commands.CreateProduct;
 using ProdutivAgro.Application.Products.Commands.DeleteProduct;
 using ProdutivAgro.Application.Products.Commands.UpdateProduct;
+using ProdutivAgro.Application.Products.Queries.GetProductById;
 using ProdutivAgro.Application.Products.Queries.GetProducts;
 using ProdutivAgro.Communication.Responses;
 
@@ -49,6 +50,20 @@ public class ProductsController(IMediator mediator) : ControllerBase
         }
 
         return NoContent();
+    }
+
+    [HttpGet]
+    [Route("{id:guid}")]
+    [ProducesResponseType(typeof(GetProductByIdResult), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ResponseErrorJson), StatusCodes.Status404NotFound)]
+    public async Task<IActionResult> GetProductById([FromRoute] Guid id, CancellationToken cancellationToken)
+    {
+        var result = await mediator.Send(new GetProductByIdQuery
+        {
+            Id = id,
+        }, cancellationToken);
+
+        return Ok(result);
     }
 
     [HttpPut]
