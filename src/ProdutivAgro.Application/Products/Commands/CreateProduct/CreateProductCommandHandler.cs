@@ -1,7 +1,6 @@
 using MediatR;
 using ProdutivAgro.Application.Abstractions.Authentication;
 using ProdutivAgro.Application.Abstractions.Persistence;
-using ProdutivAgro.Application.Products.Shared.Commands;
 using ProdutivAgro.Application.Products.Shared.Validators;
 using ProdutivAgro.Domain.Products.Entities;
 using ProdutivAgro.Domain.Products.Enums;
@@ -14,9 +13,9 @@ namespace ProdutivAgro.Application.Products.Commands.CreateProduct;
 public class CreateProductCommandHandler(
     IProductsWriteOnlyRepository productsWriteOnlyRepository,
     IUnitOfWork unitOfWork,
-    ICurrentUser currentUser) : IRequestHandler<ProductCommand<CreateProductResult>, CreateProductResult>
+    ICurrentUser currentUser) : IRequestHandler<CreateProductCommand, CreateProductResult>
 {
-    public async Task<CreateProductResult> Handle(ProductCommand<CreateProductResult> request,
+    public async Task<CreateProductResult> Handle(CreateProductCommand request,
         CancellationToken cancellationToken)
     {
         await Validate(request, cancellationToken);
@@ -39,7 +38,7 @@ public class CreateProductCommandHandler(
         };
     }
 
-    private async Task Validate(ProductCommand<CreateProductResult> request, CancellationToken cancellationToken)
+    private async Task Validate(CreateProductCommand request, CancellationToken cancellationToken)
     {
         var result = await new ProductCommandValidator<CreateProductResult>().ValidateAsync(request, cancellationToken);
         if (!result.IsValid)

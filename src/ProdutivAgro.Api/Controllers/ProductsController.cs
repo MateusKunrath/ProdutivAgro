@@ -34,8 +34,10 @@ public class ProductsController(IMediator mediator) : ControllerBase
     [HttpGet]
     [ProducesResponseType(typeof(GetProductsResult), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
-    public async Task<IActionResult> GetProducts([FromQuery] int pageNumber, [FromQuery] int pageSize,
-        CancellationToken cancellationToken)
+    public async Task<IActionResult> GetProducts(
+        CancellationToken cancellationToken,
+        [FromQuery] int pageNumber = 1,
+        [FromQuery] int pageSize = 20)
     {
         var result = await mediator.Send(
             new GetProductsQuery(pageNumber, pageSize),

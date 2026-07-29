@@ -1,11 +1,7 @@
-using MediatR;
-using ProdutivAgro.Application.Abstractions.Authentication;
+using ProdutivAgro.Application.Products.Shared.Commands;
 
 namespace ProdutivAgro.Application.Products.Commands.CreateProduct;
 
-public sealed class CreateProductCommand : IRequest<CreateProductResult>, IRequireActiveOrganization
+public sealed class CreateProductCommand : ProductCommand<CreateProductResult>
 {
-    public string Description { get; init; } = string.Empty;
-    public decimal UnitPrice { get; init; }
-    public string MeasurementUnit { get; init; } = string.Empty;
 }
