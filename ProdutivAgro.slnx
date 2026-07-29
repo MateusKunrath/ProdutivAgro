@@ -8,5 +8,9 @@
     <Project Path="src/ProdutivAgro.Infrastructure/ProdutivAgro.Infrastructure.csproj" />
     <Project Path="src/ProdutivAgro.SharedKernel/ProdutivAgro.SharedKernel.csproj" />
   </Folder>
-  <Folder Name="/tests/" />
+  <Folder Name="/tests/">
+    <Project Path="tests/ProdutivAgro.Api.IntegrationTests/ProdutivAgro.Api.IntegrationTests.csproj" />
+    <Project Path="tests/ProdutivAgro.Application.UnitTests/ProdutivAgro.Application.UnitTests.csproj" />
+    <Project Path="tests/ProdutivAgro.Testing.Common/ProdutivAgro.Testing.Common.csproj" />
+  </Folder>
 </Solution>
