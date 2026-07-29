@@ -60,4 +60,9 @@ public class ProductsRepository(ProdutivAgroDbContext dbContext)
     {
         await dbContext.Products.AddAsync(product, cancellationToken);
     }
+
+    public void Remove(Product product)
+    {
+        dbContext.Products.Remove(product);
+    }
 }

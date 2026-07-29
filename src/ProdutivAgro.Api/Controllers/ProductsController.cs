@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using ProdutivAgro.Api.Contracts.Products;
 using ProdutivAgro.Application.Products.Commands.CreateProduct;
+using ProdutivAgro.Application.Products.Commands.DeleteProduct;
 using ProdutivAgro.Application.Products.Commands.UpdateProduct;
 using ProdutivAgro.Application.Products.Queries.GetProducts;
 using ProdutivAgro.Communication.Responses;
@@ -64,6 +65,20 @@ public class ProductsController(IMediator mediator) : ControllerBase
             Description = request.Description,
             UnitPrice = request.UnitPrice,
             MeasurementUnit = request.MeasurementUnit,
+        }, cancellationToken);
+
+        return NoContent();
+    }
+
+    [HttpDelete]
+    [Route("{id:guid}")]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(typeof(ResponseErrorJson), StatusCodes.Status404NotFound)]
+    public async Task<IActionResult> DeleteProduct([FromRoute] Guid id, CancellationToken cancellationToken)
+    {
+        await mediator.Send(new DeleteProductCommand
+        {
+            Id = id,
         }, cancellationToken);
 
         return NoContent();
