@@ -42,15 +42,17 @@ public sealed class ChangePasswordCommandHandler(
     {
         var result = await new ChangePasswordCommandValidator().ValidateAsync(request, cancellationToken);
 
+        if (!result.IsValid)
+        {
+            var errors = result.Errors.Select(x => x.ErrorMessage).ToList();
+            throw new ErrorOnValidationException(errors);
+        }
+
         var passwordMatch = passwordEncrypter.Verify(request.CurrentPassword, user.Password);
         if (!passwordMatch)
         {
             result.Errors.Add(new ValidationFailure(string.Empty,
                 ResourceErrorMessages.PASSWORD_DIFFERENT_CURRENT_PASSWORD));
-        }
-
-        if (!result.IsValid)
-        {
             var errors = result.Errors.Select(x => x.ErrorMessage).ToList();
             throw new ErrorOnValidationException(errors);
         }
