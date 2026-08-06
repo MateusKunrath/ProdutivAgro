@@ -10,7 +10,7 @@ public class ChangeOrganizationResponsibleCommandValidatorTests
     private readonly ChangeOrganizationResponsibleCommandValidator _validator = new();
 
     [Fact]
-    public void Should_be_valid_when_new_responsible_user_id_is_provided()
+    public void Success()
     {
         var command = new ChangeOrganizationResponsibleCommandBuilder().Build();
 
@@ -20,7 +20,7 @@ public class ChangeOrganizationResponsibleCommandValidatorTests
     }
 
     [Fact]
-    public void Should_have_error_when_new_responsible_user_id_is_empty()
+    public void ErrorNewResponsibleUserIdEmpty()
     {
         var command = new ChangeOrganizationResponsibleCommandBuilder()
                       .WithNewResponsibleUserId(Guid.Empty)
