@@ -5,6 +5,7 @@ using ProdutivAgro.Application.Abstractions.Authentication;
 using ProdutivAgro.Application.Abstractions.Persistence;
 using ProdutivAgro.Domain.Identity.Repositories;
 using ProdutivAgro.Domain.Products.Repositories;
+using ProdutivAgro.Domain.Sales.Repositories;
 using ProdutivAgro.Infrastructure.Identity;
 using ProdutivAgro.Infrastructure.Identity.Jwt;
 using ProdutivAgro.Infrastructure.Identity.Password;
@@ -45,6 +46,7 @@ public static class DependencyInjectionExtension
         AddOrganizationsRepository(services);
         AddUsersRepository(services);
         AddRefreshTokensRepository(services);
+        AddSalesRepository(services);
     }
 
     private static void AddDbContext(IServiceCollection services, IConfiguration configuration)
@@ -80,5 +82,11 @@ public static class DependencyInjectionExtension
         services.AddScoped<IRefreshTokensReadOnlyRepository, RefreshTokenRepository>();
         services.AddScoped<IRefreshTokensWriteOnlyRepository, RefreshTokenRepository>();
         services.AddScoped<IRefreshTokensUpdateOnlyRepository, RefreshTokenRepository>();
+    }
+
+    private static void AddSalesRepository(IServiceCollection services)
+    {
+        services.AddScoped<ISalesReadOnlyRepository, SalesRepository>();
+        services.AddScoped<ISalesWriteOnlyRepository, SalesRepository>();
     }
 }
