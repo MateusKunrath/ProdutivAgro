@@ -28,7 +28,7 @@ public sealed class SaleConfiguration : IEntityTypeConfiguration<Sale>
                .HasForeignKey(x => x.OrganizationId)
                .OnDelete(DeleteBehavior.Restrict);
 
-        builder.HasOne<User>()
+        builder.HasOne(x => x.CreatedByUser)
                .WithMany()
                .HasForeignKey(x => x.CreatedByUserId)
                .OnDelete(DeleteBehavior.Restrict);

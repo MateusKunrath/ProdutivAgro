@@ -1,3 +1,4 @@
+using ProdutivAgro.Domain.Identity.Entities;
 using ProdutivAgro.Domain.Products.Entities;
 using ProdutivAgro.Domain.Sales.Enums;
 using ProdutivAgro.Domain.Shared;
@@ -26,6 +27,7 @@ public class Sale : AggregateRoot
 
     public Guid CreatedByUserId { get; private set; }
     public Guid? UpdatedByUserId { get; private set; }
+    public User CreatedByUser { get; private set; } = null!;
 
     public SaleStatus Status { get; private set; }
 

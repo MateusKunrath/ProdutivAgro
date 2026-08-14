@@ -24,6 +24,7 @@ public class SalesRepository(ProdutivAgroDbContext dbContext) : ISalesReadOnlyRe
     {
         var query = dbContext.Sales
                              .AsNoTracking()
+                             .Include(x => x.CreatedByUser)
                              .Where(x => x.OrganizationId == organizationId)
                              .OrderByDescending(x => x.SoldAt)
                              .ThenByDescending(x => x.Id);
