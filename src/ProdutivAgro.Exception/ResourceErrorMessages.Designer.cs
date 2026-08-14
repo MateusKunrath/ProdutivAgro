@@ -204,11 +204,29 @@ namespace ProdutivAgro.Exception {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Product ID is required..
+        /// </summary>
+        public static string PRODUCT_ID_IS_REQUIRED {
+            get {
+                return ResourceManager.GetString("PRODUCT_ID_IS_REQUIRED", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Product not found..
         /// </summary>
         public static string PRODUCT_NOT_FOUND {
             get {
                 return ResourceManager.GetString("PRODUCT_NOT_FOUND", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Quantity must be greater than zero..
+        /// </summary>
+        public static string QUANTITY_MUST_BE_GREATER_THAN_ZERO {
+            get {
+                return ResourceManager.GetString("QUANTITY_MUST_BE_GREATER_THAN_ZERO", resourceCulture);
             }
         }
         
@@ -227,6 +245,15 @@ namespace ProdutivAgro.Exception {
         public static string RESPONSIBLE_MUST_BE_PART_OF_THE_ORGANIZATION {
             get {
                 return ResourceManager.GetString("RESPONSIBLE_MUST_BE_PART_OF_THE_ORGANIZATION", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Items can&apos;t be empty..
+        /// </summary>
+        public static string SALE_ITEMS_EMPTY {
+            get {
+                return ResourceManager.GetString("SALE_ITEMS_EMPTY", resourceCulture);
             }
         }
         

@@ -8,6 +8,20 @@ public class Sale : AggregateRoot
 {
     private readonly List<SaleItem> _items = [];
 
+    public Sale(
+        Guid organizationId,
+        Guid createdByUserId,
+        DateTimeOffset soldAt)
+    {
+        OrganizationId = organizationId;
+        CreatedByUserId = createdByUserId;
+        SoldAt = soldAt;
+        Status = SaleStatus.Draft;
+        TotalAmount = 0;
+        CreatedAt = DateTimeOffset.UtcNow;
+        UpdatedAt = DateTimeOffset.UtcNow;
+    }
+
     public Guid OrganizationId { get; private set; }
 
     public Guid CreatedByUserId { get; private set; }

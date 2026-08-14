@@ -167,4 +167,13 @@
     <data name="CURRENT_PASSWORD_EMPTY" xml:space="preserve">
         <value>Current password is required.</value>
     </data>
+    <data name="SALE_ITEMS_EMPTY" xml:space="preserve">
+        <value>Items can't be empty.</value>
+    </data>
+    <data name="PRODUCT_ID_IS_REQUIRED" xml:space="preserve">
+        <value>Product ID is required.</value>
+    </data>
+    <data name="QUANTITY_MUST_BE_GREATER_THAN_ZERO" xml:space="preserve">
+        <value>Quantity must be greater than zero.</value>
+    </data>
 </root>

@@ -14,6 +14,15 @@ public class ProductsRepository(ProdutivAgroDbContext dbContext)
         return await dbContext.Products.AsNoTracking().FirstOrDefaultAsync(p => p.Id == id, cancellationToken);
     }
 
+    public async Task<List<Product>> GetByIdsAsync(IEnumerable<Guid> ids, Guid organizationId,
+        CancellationToken cancellationToken)
+    {
+        return await dbContext.Products
+                              .AsNoTracking()
+                              .Where(product => ids.Contains(product.Id) && product.OrganizationId == organizationId)
+                              .ToListAsync(cancellationToken);
+    }
+
     public async Task<List<Product>> GetAllAsync(Organization organization, CancellationToken cancellationToken)
     {
         return await dbContext.Products
