@@ -11,7 +11,7 @@ using ProdutivAgro.Communication.Responses;
 
 namespace ProdutivAgro.Api.Controllers;
 
-[Route("api/[controller]")]
+[Route("api/Auth")]
 [ApiController]
 public sealed class IdentityController(IMediator mediator) : ControllerBase
 {
