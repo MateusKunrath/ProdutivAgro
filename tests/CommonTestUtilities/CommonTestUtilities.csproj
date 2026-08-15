@@ -14,7 +14,6 @@
 
     <ItemGroup>
         <ProjectReference Include="..\..\src\ProdutivAgro.Application\ProdutivAgro.Application.csproj"/>
-        <ProjectReference Include="..\..\src\ProdutivAgro.Communication\ProdutivAgro.Communication.csproj"/>
     </ItemGroup>
 
 </Project>

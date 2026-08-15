@@ -1,13 +1,13 @@
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using ProdutivAgro.Api.Contracts.Errors;
 using ProdutivAgro.Api.Contracts.Products;
 using ProdutivAgro.Application.Products.Commands.CreateProduct;
 using ProdutivAgro.Application.Products.Commands.DeleteProduct;
 using ProdutivAgro.Application.Products.Commands.UpdateProduct;
 using ProdutivAgro.Application.Products.Queries.GetProductById;
 using ProdutivAgro.Application.Products.Queries.GetProducts;
-using ProdutivAgro.Communication.Responses;
 
 namespace ProdutivAgro.Api.Controllers;
 
@@ -18,8 +18,8 @@ public class ProductsController(IMediator mediator) : ControllerBase
 {
     [HttpPost]
     [ProducesResponseType(typeof(CreateProductResult), StatusCodes.Status201Created)]
-    [ProducesResponseType(typeof(ResponseErrorJson), StatusCodes.Status400BadRequest)]
-    [ProducesResponseType(typeof(ResponseErrorJson), StatusCodes.Status404NotFound)]
+    [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status404NotFound)]
     public async Task<IActionResult> CreateProduct(CreateProductRequest request, CancellationToken cancellationToken)
     {
         var result = await mediator.Send(new CreateProductCommand
@@ -55,7 +55,7 @@ public class ProductsController(IMediator mediator) : ControllerBase
     [HttpGet]
     [Route("{id:guid}")]
     [ProducesResponseType(typeof(GetProductByIdResult), StatusCodes.Status200OK)]
-    [ProducesResponseType(typeof(ResponseErrorJson), StatusCodes.Status404NotFound)]
+    [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status404NotFound)]
     public async Task<IActionResult> GetProductById([FromRoute] Guid id, CancellationToken cancellationToken)
     {
         var result = await mediator.Send(new GetProductByIdQuery
@@ -69,8 +69,8 @@ public class ProductsController(IMediator mediator) : ControllerBase
     [HttpPut]
     [Route("{id:guid}")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
-    [ProducesResponseType(typeof(ResponseErrorJson), StatusCodes.Status400BadRequest)]
-    [ProducesResponseType(typeof(ResponseErrorJson), StatusCodes.Status404NotFound)]
+    [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status404NotFound)]
     public async Task<IActionResult> UpdateProduct(
         [FromRoute] Guid id,
         UpdateProductRequest request,
@@ -90,7 +90,7 @@ public class ProductsController(IMediator mediator) : ControllerBase
     [HttpDelete]
     [Route("{id:guid}")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
-    [ProducesResponseType(typeof(ResponseErrorJson), StatusCodes.Status404NotFound)]
+    [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status404NotFound)]
     public async Task<IActionResult> DeleteProduct([FromRoute] Guid id, CancellationToken cancellationToken)
     {
         await mediator.Send(new DeleteProductCommand

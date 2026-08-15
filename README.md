@@ -224,7 +224,6 @@ Sale request example:
 src/
   ProdutivAgro.Api/            # Controllers, HTTP authentication, filters, and Swagger
   ProdutivAgro.Application/    # Use cases, validations, and behaviors
-  ProdutivAgro.Communication/  # Request and response DTOs
   ProdutivAgro.Domain/         # Entities, enums, and repository contracts
   ProdutivAgro.Exception/      # Exceptions and error messages
   ProdutivAgro.Infrastructure/ # EF Core, DbContext, migrations, repositories, and JWT
