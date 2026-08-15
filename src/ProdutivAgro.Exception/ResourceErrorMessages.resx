@@ -176,4 +176,10 @@
     <data name="QUANTITY_MUST_BE_GREATER_THAN_ZERO" xml:space="preserve">
         <value>Quantity must be greater than zero.</value>
     </data>
+    <data name="SALE_NOT_FOUND" xml:space="preserve">
+        <value>Sale not found.</value>
+    </data>
+    <data name="SALE_STATUS_INVALID" xml:space="preserve">
+        <value>Sale status is invalid.</value>
+    </data>
 </root>

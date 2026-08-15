@@ -88,5 +88,6 @@ public static class DependencyInjectionExtension
     {
         services.AddScoped<ISalesReadOnlyRepository, SalesRepository>();
         services.AddScoped<ISalesWriteOnlyRepository, SalesRepository>();
+        services.AddScoped<ISalesUpdateOnlyRepository, SalesRepository>();
     }
 }

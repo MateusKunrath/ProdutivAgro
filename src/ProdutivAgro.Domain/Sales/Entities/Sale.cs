@@ -54,4 +54,9 @@ public class Sale : AggregateRoot
         TotalAmount = _items.Sum(x => x.TotalAmount);
         UpdatedAt = DateTimeOffset.UtcNow;
     }
+
+    public void SetSaleStatus(SaleStatus status)
+    {
+        Status = status;
+    }
 }

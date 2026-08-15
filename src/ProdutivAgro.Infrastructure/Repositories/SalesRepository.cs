@@ -5,9 +5,11 @@ using ProdutivAgro.Infrastructure.Persistence;
 
 namespace ProdutivAgro.Infrastructure.Repositories;
 
-public class SalesRepository(ProdutivAgroDbContext dbContext) : ISalesReadOnlyRepository, ISalesWriteOnlyRepository
+public class SalesRepository(ProdutivAgroDbContext dbContext)
+    : ISalesReadOnlyRepository, ISalesWriteOnlyRepository, ISalesUpdateOnlyRepository
 {
-    public async Task<Sale?> GetByIdAsync(Guid id, Guid organizationId, CancellationToken cancellationToken)
+    async Task<Sale?> ISalesReadOnlyRepository.GetByIdAsync(Guid id, Guid organizationId,
+        CancellationToken cancellationToken)
     {
         return await dbContext.Sales
                               .AsNoTracking()
@@ -38,6 +40,20 @@ public class SalesRepository(ProdutivAgroDbContext dbContext) : ISalesReadOnlyRe
                           .ToListAsync(cancellationToken);
 
         return (sales, totalCount);
+    }
+
+    async Task<Sale?> ISalesUpdateOnlyRepository.GetByIdAsync(Guid id, Guid organizationId,
+        CancellationToken cancellationToken)
+    {
+        return await dbContext.Sales
+                              .Include(x => x.Items)
+                              .Where(x => x.OrganizationId == organizationId)
+                              .FirstOrDefaultAsync(x => x.Id == id, cancellationToken);
+    }
+
+    public void Update(Sale sale)
+    {
+        dbContext.Sales.Update(sale);
     }
 
     public async Task AddAsync(Sale sale, CancellationToken cancellationToken)

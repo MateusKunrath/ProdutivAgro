@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using ProdutivAgro.Api.Contracts.Errors;
 using ProdutivAgro.Api.Contracts.Sales;
+using ProdutivAgro.Application.Sales.Commands.CompleteSale;
 using ProdutivAgro.Application.Sales.Commands.CreateSale;
 using ProdutivAgro.Application.Sales.Queries.GetSales;
 
@@ -41,6 +42,21 @@ public class SalesController(IMediator mediator) : ControllerBase
         {
             return Ok(result);
         }
+
+        return NoContent();
+    }
+
+    [HttpPost]
+    [Route("{id:guid}/Complete")]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status404NotFound)]
+    public async Task<IActionResult> CompleteSale([FromRoute] Guid id, CancellationToken cancellationToken)
+    {
+        await mediator.Send(new CompleteSaleCommand
+        {
+            Id = id,
+        }, cancellationToken);
 
         return NoContent();
     }

@@ -258,6 +258,24 @@ namespace ProdutivAgro.Exception {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Sale not found..
+        /// </summary>
+        public static string SALE_NOT_FOUND {
+            get {
+                return ResourceManager.GetString("SALE_NOT_FOUND", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Sale status is invalid..
+        /// </summary>
+        public static string SALE_STATUS_INVALID {
+            get {
+                return ResourceManager.GetString("SALE_STATUS_INVALID", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Unit price must be greater than zero..
         /// </summary>
         public static string UNIT_PRICE_MUST_BE_GREATER_THAN_ZERO {
