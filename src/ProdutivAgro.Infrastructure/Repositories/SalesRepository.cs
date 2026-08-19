@@ -60,4 +60,9 @@ public class SalesRepository(ProdutivAgroDbContext dbContext)
     {
         await dbContext.Sales.AddAsync(sale, cancellationToken);
     }
+
+    public async Task AddItemsAsync(IEnumerable<SaleItem> items, CancellationToken cancellationToken)
+    {
+        await dbContext.SaleItems.AddRangeAsync(items, cancellationToken);
+    }
 }

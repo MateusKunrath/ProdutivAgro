@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using ProdutivAgro.Api.Contracts.Errors;
 using ProdutivAgro.Api.Contracts.Sales;
+using ProdutivAgro.Application.Sales.Commands.AddSaleItems;
 using ProdutivAgro.Application.Sales.Commands.CompleteSale;
 using ProdutivAgro.Application.Sales.Commands.CreateSale;
 using ProdutivAgro.Application.Sales.Queries.GetSales;
@@ -22,10 +23,32 @@ public class SalesController(IMediator mediator) : ControllerBase
     {
         var result = await mediator.Send(new CreateSaleCommand
         {
-            Items = request.Items,
+            SoldAt = request.SoldAt,
         }, cancellationToken);
 
         return Created(string.Empty, result);
+    }
+
+    [HttpPost("{id:guid}/items")]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status404NotFound)]
+    public async Task<IActionResult> AddSaleItems(
+        [FromRoute] Guid id,
+        [FromBody] List<AddSaleItemRequest>? items,
+        CancellationToken cancellationToken)
+    {
+        await mediator.Send(new AddSaleItemsCommand
+        {
+            SaleId = id,
+            Items = items?.Select(item => new AddSaleItemCommand
+            {
+                ProductId = item.ProductId,
+                Quantity = item.Quantity,
+            }).ToList() ?? [],
+        }, cancellationToken);
+
+        return NoContent();
     }
 
     [HttpGet]

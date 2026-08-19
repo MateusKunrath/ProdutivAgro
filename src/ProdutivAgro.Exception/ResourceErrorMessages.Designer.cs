@@ -276,6 +276,24 @@ namespace ProdutivAgro.Exception {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Sold at is required..
+        /// </summary>
+        public static string SOLD_AT_EMPTY {
+            get {
+                return ResourceManager.GetString("SOLD_AT_EMPTY", resourceCulture);
+            }
+        }
+
+        /// <summary>
+        ///   Looks up a localized string similar to Sold at cannot be in the future..
+        /// </summary>
+        public static string SOLD_AT_CANNOT_BE_IN_THE_FUTURE {
+            get {
+                return ResourceManager.GetString("SOLD_AT_CANNOT_BE_IN_THE_FUTURE", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Unit price must be greater than zero..
         /// </summary>
         public static string UNIT_PRICE_MUST_BE_GREATER_THAN_ZERO {

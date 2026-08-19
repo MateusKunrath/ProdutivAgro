@@ -182,4 +182,10 @@
     <data name="SALE_STATUS_INVALID" xml:space="preserve">
         <value>Sale status is invalid.</value>
     </data>
+    <data name="SOLD_AT_EMPTY" xml:space="preserve">
+        <value>Sold at is required.</value>
+    </data>
+    <data name="SOLD_AT_CANNOT_BE_IN_THE_FUTURE" xml:space="preserve">
+        <value>Sold at cannot be in the future.</value>
+    </data>
 </root>

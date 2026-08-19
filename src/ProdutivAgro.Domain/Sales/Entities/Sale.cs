@@ -39,7 +39,7 @@ public class Sale : AggregateRoot
 
     public IReadOnlyCollection<SaleItem> Items => _items;
 
-    public void AddItem(Product product, decimal quantity)
+    public SaleItem AddItem(Product product, decimal quantity)
     {
         var item = new SaleItem(
             Id,
@@ -53,6 +53,8 @@ public class Sale : AggregateRoot
 
         TotalAmount = _items.Sum(x => x.TotalAmount);
         UpdatedAt = DateTimeOffset.UtcNow;
+
+        return item;
     }
 
     public void SetSaleStatus(SaleStatus status)
