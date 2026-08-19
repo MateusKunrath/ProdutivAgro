@@ -16,9 +16,9 @@ public sealed class AddSaleItemsCommandHandler(
     ISalesWriteOnlyRepository salesWriteOnlyRepository,
     IProductsReadOnlyRepository productsReadOnlyRepository,
     ICurrentUser currentUser,
-    IUnitOfWork unitOfWork) : IRequestHandler<AddSaleItemsCommand, Unit>
+    IUnitOfWork unitOfWork) : IRequestHandler<AddSaleItemsCommand, List<AddSaleItemResult>>
 {
-    public async Task<Unit> Handle(AddSaleItemsCommand request, CancellationToken cancellationToken)
+    public async Task<List<AddSaleItemResult>> Handle(AddSaleItemsCommand request, CancellationToken cancellationToken)
     {
         await Validate(request, cancellationToken);
 
@@ -38,17 +38,20 @@ public sealed class AddSaleItemsCommandHandler(
         }
 
         var products = await GetProducts(request.Items, cancellationToken);
-        var quantitiesByProductId = request.Items
-            .GroupBy(item => item.ProductId)
-            .ToDictionary(group => group.Key, group => group.Sum(item => item.Quantity));
+        var productsById = products.ToDictionary(product => product.Id);
 
-        var saleItems = products
-            .Select(product => sale.AddItem(product, quantitiesByProductId[product.Id]))
+        var saleItems = request.Items
+            .Select(item => sale.AddItem(productsById[item.ProductId], item.Quantity))
             .ToList();
 
         await salesWriteOnlyRepository.AddItemsAsync(saleItems, cancellationToken);
         await unitOfWork.Commit();
-        return Unit.Value;
+
+        return saleItems.Select(item => new AddSaleItemResult
+        {
+            ProductId = item.SourceProductId,
+            SaleItemId = item.Id,
+        }).ToList();
     }
 
     private async Task<List<Product>> GetProducts(

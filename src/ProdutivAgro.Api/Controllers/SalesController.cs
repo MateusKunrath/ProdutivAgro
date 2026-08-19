@@ -30,7 +30,7 @@ public class SalesController(IMediator mediator) : ControllerBase
     }
 
     [HttpPost("{id:guid}/items")]
-    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(typeof(List<AddSaleItemResult>), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status404NotFound)]
     public async Task<IActionResult> AddSaleItems(
@@ -38,7 +38,7 @@ public class SalesController(IMediator mediator) : ControllerBase
         [FromBody] List<AddSaleItemRequest>? items,
         CancellationToken cancellationToken)
     {
-        await mediator.Send(new AddSaleItemsCommand
+        var result = await mediator.Send(new AddSaleItemsCommand
         {
             SaleId = id,
             Items = items?.Select(item => new AddSaleItemCommand
@@ -48,7 +48,7 @@ public class SalesController(IMediator mediator) : ControllerBase
             }).ToList() ?? [],
         }, cancellationToken);
 
-        return NoContent();
+        return Ok(result);
     }
 
     [HttpGet]

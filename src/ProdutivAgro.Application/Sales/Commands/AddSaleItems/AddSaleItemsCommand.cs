@@ -3,7 +3,7 @@ using ProdutivAgro.Application.Abstractions.Authentication;
 
 namespace ProdutivAgro.Application.Sales.Commands.AddSaleItems;
 
-public sealed class AddSaleItemsCommand : IRequest<Unit>, IRequireActiveOrganization
+public sealed class AddSaleItemsCommand : IRequest<List<AddSaleItemResult>>, IRequireActiveOrganization
 {
     public Guid SaleId { get; init; }
 
