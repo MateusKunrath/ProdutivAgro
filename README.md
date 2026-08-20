@@ -1,26 +1,38 @@
 # ProdutivAgro
 
-## About the project
+ProdutivAgro is a REST API for product and sales management in agricultural organizations. Each account belongs to one organization, and product and sales data is isolated by organization.
 
-**ProdutivAgro** is a REST API designed to support product and sales management for organizations in the agricultural sector. The application allows users to create an account connected to an organization, authenticate, manage products, and register sales containing one or more items.
+The project follows **Clean Architecture** and **DDD** principles: the domain contains business rules and contracts; the application layer implements use cases and validation; infrastructure provides persistence, authentication, and technical integrations; and the API exposes documented HTTP endpoints through Swagger.
 
-The project is organized in layers inspired by **Clean Architecture** and **DDD**. The domain layer contains entities and contracts; the application layer implements use cases and validations; the infrastructure layer provides persistence, authentication, and technical integrations; and the API layer exposes documented HTTP endpoints through Swagger.
+## Features
 
-### Features
-
-- User registration, login, token refresh, logout, and password changes.
-- JWT authentication and authorization with refresh tokens.
-- Organization creation during the first user registration.
-- Current organization lookup and organization responsibility transfer.
+- User registration with initial organization creation.
+- JWT authentication, refresh-token renewal and invalidation, and password changes.
+- Current-organization lookup and responsibility transfer to another user.
 - Product CRUD with unit price and measurement unit.
-- Sales registration and paginated listing.
-- Data isolation by the authenticated user's organization.
-- Request validation with FluentValidation.
-- Automatic Entity Framework Core migration execution when the API starts.
-- Interactive API documentation and testing with Swagger.
-- Unit and integration tests with xUnit and Shouldly.
+- Sales lifecycle with **Draft**, **Completed**, and **Cancelled** statuses.
+- Draft-sale creation; item addition, quantity updates, and item removal.
+- Paginated and detailed sales queries, including item and total information.
+- Data isolation for the authenticated user's organization.
+- Request validation with FluentValidation, centralized error handling, and interactive Swagger documentation.
+- Automatic execution of pending Entity Framework Core migrations at API startup.
+- Unit and integration tests.
 
-### Built with
+## Domain definitions
+
+| Term | Definition |
+| --- | --- |
+| Organization | The context that owns users, products, and sales. Data is not shared between organizations. |
+| Responsible user | The user responsible for the organization, who can transfer that responsibility to another user. |
+| Product | A sellable item identified by description, unit price, and measurement unit. |
+| Draft sale | A newly created sale whose items can still be changed. |
+| Completed sale | A sale finalized from the draft status. |
+| Cancelled sale | A sale marked as cancelled; it cannot be cancelled again. |
+| Sale total | The sum of item totals, calculated as `quantity × unit price`. |
+
+Supported measurement units are `Kilogram`, `Unit`, `Box`, and `Tray`.
+
+## Built with
 
 ![.NET 8](https://img.shields.io/badge/.NET%208-512BD4?logo=dotnet&logoColor=white&style=for-the-badge)
 ![C Sharp](https://img.shields.io/badge/C%23-239120?logo=csharp&logoColor=white&style=for-the-badge)
@@ -34,8 +46,7 @@ The project is organized in layers inspired by **Clean Architecture** and **DDD*
 ### Prerequisites
 
 - [.NET SDK 8.0](https://dotnet.microsoft.com/download/dotnet/8.0) or later.
-- [Docker Desktop](https://www.docker.com/products/docker-desktop/) (recommended to run PostgreSQL) or a local PostgreSQL instance.
-- Visual Studio, Rider, VS Code, or another .NET-compatible IDE.
+- [Docker Desktop](https://www.docker.com/products/docker-desktop/) (recommended) or a local PostgreSQL instance.
 
 ### Installation and execution
 
@@ -54,54 +65,124 @@ The project is organized in layers inspired by **Clean Architecture** and **DDD*
 
    The `docker-compose.yml` file creates the `ProdutivAgroDb` database on port `5432`.
 
-3. Review or update the development configuration in `src/ProdutivAgro.Api/appsettings.Development.json`:
+3. Review the development configuration in `src/ProdutivAgro.Api/appsettings.Development.json`. The default configuration uses:
 
    ```json
    {
      "ConnectionStrings": {
-       "DefaultConnection": "Host=localhost;Port=5432;Database=ProdutivAgroDb;Username=postgres;Password=your_password"
-     },
-     "Settings": {
-       "Jwt": {
-         "SigningKey": "a-secure-secret-key-with-an-appropriate-length",
-         "ExpiresMinutes": 15
-       },
-       "RefreshToken": {
-         "ExpiresDays": 30
-       }
+       "DefaultConnection": "Host=localhost;Port=5432;Database=ProdutivAgroDb;Username=postgres;Password=@Password123"
      }
    }
    ```
 
-   If you use the unmodified `docker-compose.yml`, use the credentials configured in it. For real environments, keep database passwords and JWT keys outside version-controlled files, such as in User Secrets or environment variables.
+   In production, provide the database password and JWT signing key through environment variables or User Secrets. Do not keep secrets in version-controlled files.
 
-4. Restore dependencies:
+4. Restore packages and run the API:
 
    ```sh
    dotnet restore ProdutivAgro.slnx
-   ```
-
-5. Run the API:
-
-   ```sh
    dotnet run --project src/ProdutivAgro.Api/ProdutivAgro.Api.csproj
    ```
 
-   When it starts, the API automatically applies any pending migrations to the configured database.
+   Pending migrations are applied automatically at startup.
 
-6. Open Swagger:
+5. Open Swagger at [https://localhost:7149/swagger](https://localhost:7149/swagger). The HTTP profile uses `http://localhost:5041/swagger`.
 
-   ```text
-   https://localhost:7149/swagger
-   ```
+## Authentication
 
-   If you run another profile or port, use the URL displayed in the terminal. The default HTTP profile runs at `http://localhost:5041/swagger`.
+Protected endpoints require a JWT access token:
+
+```text
+Authorization: Bearer {accessToken}
+```
+
+In Swagger, click **Authorize** and enter `Bearer {accessToken}` after logging in.
+
+## Main endpoints
+
+### Authentication
+
+| Method | Route | Description |
+| --- | --- | --- |
+| `POST` | `/api/Auth/Register` | Creates a user and its initial organization. |
+| `POST` | `/api/Auth/Login` | Authenticates a user and returns tokens. |
+| `POST` | `/api/Auth/RefreshAccessToken` | Generates a new access token from a refresh token. |
+| `POST` | `/api/Auth/Logout` | Invalidates the provided refresh token. |
+| `POST` | `/api/Auth/ChangePassword` | Changes the authenticated user's password. |
+
+Registration request example:
+
+```json
+{
+  "name": "John Smith",
+  "email": "john@goodharvestfarm.com",
+  "password": "Password@123",
+  "organizationName": "Good Harvest Farm"
+}
+```
+
+### Organizations
+
+| Method | Route | Description |
+| --- | --- | --- |
+| `GET` | `/api/Organizations/Current` | Returns the authenticated user's organization. |
+| `PUT` | `/api/Organizations/ChangeResponsible` | Transfers organization responsibility. |
+
+### Products
+
+| Method | Route | Description |
+| --- | --- | --- |
+| `POST` | `/api/Products` | Creates a product. |
+| `GET` | `/api/Products?pageNumber=1&pageSize=20` | Lists products with pagination. |
+| `GET` | `/api/Products/{id}` | Retrieves a product by identifier. |
+| `PUT` | `/api/Products/{id}` | Updates a product. |
+| `DELETE` | `/api/Products/{id}` | Deletes a product. |
+
+Product request example:
+
+```json
+{
+  "description": "Soybeans",
+  "unitPrice": 132.5,
+  "measurementUnit": "Kilogram"
+}
+```
+
+### Sales
+
+| Method | Route | Description |
+| --- | --- | --- |
+| `POST` | `/api/Sales` | Creates a draft sale. |
+| `POST` | `/api/Sales/{id}/Items` | Adds one or more items to a sale. |
+| `PATCH` | `/api/Sales/{id}/Items/{saleItemId}` | Updates an item's quantity. |
+| `DELETE` | `/api/Sales/{id}/Items/{saleItemId}` | Removes an item from a sale. |
+| `POST` | `/api/Sales/{id}/Complete` | Completes a sale. |
+| `POST` | `/api/Sales/{id}/Cancel` | Cancels a sale. |
+| `GET` | `/api/Sales?pageNumber=1&pageSize=20` | Lists organization sales with pagination. |
+| `GET` | `/api/Sales/{id}` | Retrieves a sale, its items, and totals. |
+
+Create the sale first:
+
+```json
+{
+  "soldAt": "2026-08-19T10:00:00-03:00"
+}
+```
+
+Then add items using the returned sale identifier:
+
+```json
+[
+  {
+    "productId": "00000000-0000-0000-0000-000000000000",
+    "quantity": 10.5
+  }
+]
+```
 
 ## Database and migrations
 
-Migrations are stored in `src/ProdutivAgro.Infrastructure/Migrations`. The application calls `Database.MigrateAsync()` on startup, so the existing migrations are applied as long as the database is available.
-
-To create a migration after changing entities or `DbContext` configurations, install the Entity Framework Core CLI tool if needed:
+Migrations are stored in `src/ProdutivAgro.Infrastructure/Migrations`. To create a migration, install the EF Core CLI tool if needed:
 
 ```sh
 dotnet tool install --global dotnet-ef
@@ -134,88 +215,6 @@ Or run a specific test project:
 ```sh
 dotnet test tests/ProdutivAgro.Application.UnitTests/ProdutivAgro.Application.UnitTests.csproj
 dotnet test tests/ProdutivAgro.Api.IntegrationTests/ProdutivAgro.Api.IntegrationTests.csproj
-```
-
-## Authentication
-
-Protected endpoints require a JWT token in the request header:
-
-```text
-Authorization: Bearer {accessToken}
-```
-
-In Swagger, click **Authorize** and enter `Bearer {accessToken}` after logging in.
-
-## Main endpoints
-
-### Identity
-
-| Method | Route | Description |
-| --- | --- | --- |
-| `POST` | `/api/Identity/Register` | Creates a user and its initial organization. |
-| `POST` | `/api/Identity/Login` | Authenticates a user and returns tokens. |
-| `POST` | `/api/Identity/RefreshAccessToken` | Generates a new access token from a refresh token. |
-| `POST` | `/api/Identity/Logout` | Invalidates a refresh token. |
-| `POST` | `/api/Identity/ChangePassword` | Changes the authenticated user's password. |
-
-Registration request example:
-
-```json
-{
-  "name": "John Smith",
-  "email": "john@produtivagro.com",
-  "password": "Password@123",
-  "organizationName": "Good Harvest Farm"
-}
-```
-
-### Organizations
-
-| Method | Route | Description |
-| --- | --- | --- |
-| `GET` | `/api/Organizations/Current` | Returns the authenticated user's organization. |
-| `PUT` | `/api/Organizations/ChangeResponsible` | Assigns another user as the organization owner. |
-
-### Products
-
-| Method | Route | Description |
-| --- | --- | --- |
-| `POST` | `/api/Products` | Creates a product. |
-| `GET` | `/api/Products?pageNumber=1&pageSize=20` | Lists paginated products. |
-| `GET` | `/api/Products/{id}` | Retrieves a product by identifier. |
-| `PUT` | `/api/Products/{id}` | Updates a product. |
-| `DELETE` | `/api/Products/{id}` | Deletes a product. |
-
-Product request example:
-
-```json
-{
-  "description": "Soybeans",
-  "unitPrice": 132.5,
-  "measurementUnit": "Kilogram"
-}
-```
-
-Accepted measurement units: `Kilogram`, `Unit`, `Box`, and `Tray`.
-
-### Sales
-
-| Method | Route | Description |
-| --- | --- | --- |
-| `POST` | `/api/Sales` | Registers a sale with one or more items. |
-| `GET` | `/api/Sales?pageNumber=1&pageSize=20` | Lists paginated sales for the organization. |
-
-Sale request example:
-
-```json
-{
-  "items": [
-    {
-      "productId": "00000000-0000-0000-0000-000000000000",
-      "quantity": 10.5
-    }
-  ]
-}
 ```
 
 ## Project structure
