@@ -188,4 +188,7 @@
     <data name="SOLD_AT_CANNOT_BE_IN_THE_FUTURE" xml:space="preserve">
         <value>Sold at cannot be in the future.</value>
     </data>
+    <data name="SALE_ITEM_NOT_FOUND" xml:space="preserve">
+        <value>Item not found.</value>
+    </data>
 </root>

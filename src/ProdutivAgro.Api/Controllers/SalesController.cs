@@ -6,6 +6,7 @@ using ProdutivAgro.Api.Contracts.Sales;
 using ProdutivAgro.Application.Sales.Commands.AddSaleItems;
 using ProdutivAgro.Application.Sales.Commands.CompleteSale;
 using ProdutivAgro.Application.Sales.Commands.CreateSale;
+using ProdutivAgro.Application.Sales.Commands.UpdateQuantitySaleItem;
 using ProdutivAgro.Application.Sales.Queries.GetSaleById;
 using ProdutivAgro.Application.Sales.Queries.GetSales;
 
@@ -30,7 +31,8 @@ public class SalesController(IMediator mediator) : ControllerBase
         return Created(string.Empty, result);
     }
 
-    [HttpPost("{id:guid}/items")]
+    [HttpPost]
+    [Route("{id:guid}/items")]
     [ProducesResponseType(typeof(List<AddSaleItemResult>), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status404NotFound)]
@@ -97,5 +99,23 @@ public class SalesController(IMediator mediator) : ControllerBase
         }, cancellationToken);
 
         return Ok(result);
+    }
+
+    [HttpPatch]
+    [Route("{id:guid}/items/{saleItemId:guid}")]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status404NotFound)]
+    public async Task<IActionResult> UpdateSaleItemQuantity([FromRoute] Guid id, [FromRoute] Guid saleItemId,
+        UpdateSaleItemQuantityRequest request, CancellationToken cancellationToken)
+    {
+        await mediator.Send(new UpdateQuantitySaleItemCommand
+        {
+            Id = id,
+            SaleItemId = saleItemId,
+            Quantity = request.Quantity,
+        }, cancellationToken);
+
+        return NoContent();
     }
 }

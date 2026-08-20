@@ -62,4 +62,19 @@ public class Sale : AggregateRoot
     {
         Status = status;
     }
+
+    public bool UpdateItemQuantity(Guid saleItemId, decimal quantity)
+    {
+        var item = _items.FirstOrDefault(x => x.Id == saleItemId);
+        if (item is null)
+        {
+            return false;
+        }
+
+        item.UpdateQuantity(quantity);
+        TotalAmount = _items.Sum(x => x.TotalAmount);
+        UpdatedAt = DateTimeOffset.UtcNow;
+
+        return true;
+    }
 }

@@ -249,6 +249,15 @@ namespace ProdutivAgro.Exception {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Item not found..
+        /// </summary>
+        public static string SALE_ITEM_NOT_FOUND {
+            get {
+                return ResourceManager.GetString("SALE_ITEM_NOT_FOUND", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Items can&apos;t be empty..
         /// </summary>
         public static string SALE_ITEMS_EMPTY {
@@ -276,20 +285,20 @@ namespace ProdutivAgro.Exception {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Sold at is required..
-        /// </summary>
-        public static string SOLD_AT_EMPTY {
-            get {
-                return ResourceManager.GetString("SOLD_AT_EMPTY", resourceCulture);
-            }
-        }
-
-        /// <summary>
         ///   Looks up a localized string similar to Sold at cannot be in the future..
         /// </summary>
         public static string SOLD_AT_CANNOT_BE_IN_THE_FUTURE {
             get {
                 return ResourceManager.GetString("SOLD_AT_CANNOT_BE_IN_THE_FUTURE", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Sold at is required..
+        /// </summary>
+        public static string SOLD_AT_EMPTY {
+            get {
+                return ResourceManager.GetString("SOLD_AT_EMPTY", resourceCulture);
             }
         }
         

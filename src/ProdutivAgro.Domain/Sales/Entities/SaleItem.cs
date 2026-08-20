@@ -29,7 +29,13 @@ public class SaleItem : Entity
     public string ProductDescription { get; private set; }
     public MeasurementUnit Unit { get; private set; }
     public decimal Quantity { get; private set; }
-    public decimal UnitPrice { get; private set; }
+    public decimal UnitPrice { get; }
 
     public decimal TotalAmount { get; private set; }
+
+    public void UpdateQuantity(decimal quantity)
+    {
+        Quantity = quantity;
+        TotalAmount = quantity * UnitPrice;
+    }
 }
