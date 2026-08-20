@@ -6,6 +6,7 @@ using ProdutivAgro.Api.Contracts.Sales;
 using ProdutivAgro.Application.Sales.Commands.AddSaleItems;
 using ProdutivAgro.Application.Sales.Commands.CompleteSale;
 using ProdutivAgro.Application.Sales.Commands.CreateSale;
+using ProdutivAgro.Application.Sales.Commands.DeleteSaleItem;
 using ProdutivAgro.Application.Sales.Commands.UpdateSaleItemQuantity;
 using ProdutivAgro.Application.Sales.Queries.GetSaleById;
 using ProdutivAgro.Application.Sales.Queries.GetSales;
@@ -114,6 +115,22 @@ public class SalesController(IMediator mediator) : ControllerBase
             Id = id,
             SaleItemId = saleItemId,
             Quantity = request.Quantity,
+        }, cancellationToken);
+
+        return NoContent();
+    }
+
+    [HttpDelete]
+    [Route("{id:guid}/items/{saleItemId:guid}")]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status404NotFound)]
+    public async Task<IActionResult> DeleteSaleItem([FromRoute] Guid id, [FromRoute] Guid saleItemId,
+        CancellationToken cancellationToken)
+    {
+        await mediator.Send(new DeleteSaleItemCommand
+        {
+            SaleId = id,
+            SaleItemId = saleItemId,
         }, cancellationToken);
 
         return NoContent();

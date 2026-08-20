@@ -52,8 +52,8 @@ public class Sale : AggregateRoot
 
         _items.Add(item);
 
-        TotalAmount = _items.Sum(x => x.TotalAmount);
-        UpdatedAt = DateTimeOffset.UtcNow;
+        UpdateTotalAmount();
+        Touched();
 
         return item;
     }
@@ -61,6 +61,16 @@ public class Sale : AggregateRoot
     public void SetSaleStatus(SaleStatus status)
     {
         Status = status;
+    }
+
+    private void UpdateTotalAmount()
+    {
+        TotalAmount = _items.Sum(x => x.TotalAmount);
+    }
+
+    private void Touched()
+    {
+        UpdatedAt = DateTimeOffset.UtcNow;
     }
 
     public bool UpdateItemQuantity(Guid saleItemId, decimal quantity)
@@ -72,8 +82,23 @@ public class Sale : AggregateRoot
         }
 
         item.UpdateQuantity(quantity);
-        TotalAmount = _items.Sum(x => x.TotalAmount);
-        UpdatedAt = DateTimeOffset.UtcNow;
+        UpdateTotalAmount();
+        Touched();
+
+        return true;
+    }
+
+    public bool RemoveItem(Guid saleItemId)
+    {
+        var item = _items.FirstOrDefault(x => x.Id == saleItemId);
+        if (item is null)
+        {
+            return false;
+        }
+
+        _items.Remove(item);
+        UpdateTotalAmount();
+        Touched();
 
         return true;
     }
