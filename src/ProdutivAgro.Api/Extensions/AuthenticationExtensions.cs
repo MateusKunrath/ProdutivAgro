@@ -1,6 +1,7 @@
 using System.Text;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
+using ProdutivAgro.Application.Abstractions.Authentication;
 
 namespace ProdutivAgro.Api.Extensions;
 
@@ -22,6 +23,7 @@ public static class AuthenticationExtensions
                 ValidateIssuer = false,
                 ValidateAudience = false,
                 ClockSkew = new TimeSpan(0),
+                RoleClaimType = CustomClaims.Role,
                 IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(signingKey!)),
             };
         });
