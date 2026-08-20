@@ -6,7 +6,7 @@ using ProdutivAgro.Api.Contracts.Sales;
 using ProdutivAgro.Application.Sales.Commands.AddSaleItems;
 using ProdutivAgro.Application.Sales.Commands.CompleteSale;
 using ProdutivAgro.Application.Sales.Commands.CreateSale;
-using ProdutivAgro.Application.Sales.Commands.UpdateQuantitySaleItem;
+using ProdutivAgro.Application.Sales.Commands.UpdateSaleItemQuantity;
 using ProdutivAgro.Application.Sales.Queries.GetSaleById;
 using ProdutivAgro.Application.Sales.Queries.GetSales;
 
@@ -109,7 +109,7 @@ public class SalesController(IMediator mediator) : ControllerBase
     public async Task<IActionResult> UpdateSaleItemQuantity([FromRoute] Guid id, [FromRoute] Guid saleItemId,
         UpdateSaleItemQuantityRequest request, CancellationToken cancellationToken)
     {
-        await mediator.Send(new UpdateQuantitySaleItemCommand
+        await mediator.Send(new UpdateSaleItemQuantityCommand
         {
             Id = id,
             SaleItemId = saleItemId,

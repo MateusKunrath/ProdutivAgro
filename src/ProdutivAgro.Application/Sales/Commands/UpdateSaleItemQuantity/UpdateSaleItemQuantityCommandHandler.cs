@@ -6,14 +6,14 @@ using ProdutivAgro.Domain.Sales.Repositories;
 using ProdutivAgro.Exception;
 using ProdutivAgro.Exception.ExceptionsBase;
 
-namespace ProdutivAgro.Application.Sales.Commands.UpdateQuantitySaleItem;
+namespace ProdutivAgro.Application.Sales.Commands.UpdateSaleItemQuantity;
 
-public sealed class UpdateQuantitySaleItemCommandHandler(
+public sealed class UpdateSaleItemQuantityCommandHandler(
     ISalesUpdateOnlyRepository salesUpdateOnlyRepository,
     ICurrentUser currentUser,
-    IUnitOfWork unitOfWork) : IRequestHandler<UpdateQuantitySaleItemCommand, Unit>
+    IUnitOfWork unitOfWork) : IRequestHandler<UpdateSaleItemQuantityCommand, Unit>
 {
-    public async Task<Unit> Handle(UpdateQuantitySaleItemCommand request, CancellationToken cancellationToken)
+    public async Task<Unit> Handle(UpdateSaleItemQuantityCommand request, CancellationToken cancellationToken)
     {
         await Validate(request, cancellationToken);
 
@@ -38,9 +38,9 @@ public sealed class UpdateQuantitySaleItemCommandHandler(
         return Unit.Value;
     }
 
-    private static async Task Validate(UpdateQuantitySaleItemCommand request, CancellationToken cancellationToken)
+    private static async Task Validate(UpdateSaleItemQuantityCommand request, CancellationToken cancellationToken)
     {
-        var result = await new UpdateQuantitySaleItemCommandValidator().ValidateAsync(request, cancellationToken);
+        var result = await new UpdateSaleItemQuantityCommandValidator().ValidateAsync(request, cancellationToken);
         if (!result.IsValid)
         {
             throw new ErrorOnValidationException(result.Errors.Select(x => x.ErrorMessage).ToList());
