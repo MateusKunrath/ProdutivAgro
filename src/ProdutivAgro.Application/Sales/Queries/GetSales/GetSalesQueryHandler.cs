@@ -1,5 +1,7 @@
 using MediatR;
 using ProdutivAgro.Application.Abstractions.Authentication;
+using ProdutivAgro.Application.Sales.Shared;
+using ProdutivAgro.Application.Shared;
 using ProdutivAgro.Domain.Sales.Extensions;
 using ProdutivAgro.Domain.Sales.Repositories;
 
@@ -31,11 +33,11 @@ public class GetSalesQueryHandler(
                     Id = sale.Id,
                     Status = sale.Status.SaleStatusToString(),
                     TotalAmount = sale.TotalAmount,
-                    OrganizationId = sale.OrganizationId,
+                    Organization = new OrganizationIdResult { Id = sale.OrganizationId },
                     SoldAt = sale.SoldAt,
                     CreatedAt = sale.CreatedAt,
                     UpdatedAt = sale.UpdatedAt,
-                    CreatedByUser = new CreatedByUserResult
+                    SaleUser = new SaleUserResult
                     {
                         Id = sale.CreatedByUser.Id,
                         Name = sale.CreatedByUser.Name,

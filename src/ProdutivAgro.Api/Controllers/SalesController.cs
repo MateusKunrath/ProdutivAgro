@@ -6,6 +6,7 @@ using ProdutivAgro.Api.Contracts.Sales;
 using ProdutivAgro.Application.Sales.Commands.AddSaleItems;
 using ProdutivAgro.Application.Sales.Commands.CompleteSale;
 using ProdutivAgro.Application.Sales.Commands.CreateSale;
+using ProdutivAgro.Application.Sales.Queries.GetSaleById;
 using ProdutivAgro.Application.Sales.Queries.GetSales;
 
 namespace ProdutivAgro.Api.Controllers;
@@ -82,5 +83,19 @@ public class SalesController(IMediator mediator) : ControllerBase
         }, cancellationToken);
 
         return NoContent();
+    }
+
+    [HttpGet]
+    [Route("{id:guid}")]
+    [ProducesResponseType(typeof(GetSaleByIdResult), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status404NotFound)]
+    public async Task<IActionResult> GetSaleById([FromRoute] Guid id, CancellationToken cancellationToken)
+    {
+        var result = await mediator.Send(new GetSaleByIdQuery
+        {
+            Id = id,
+        }, cancellationToken);
+
+        return Ok(result);
     }
 }

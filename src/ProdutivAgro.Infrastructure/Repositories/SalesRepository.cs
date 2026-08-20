@@ -14,6 +14,8 @@ public class SalesRepository(ProdutivAgroDbContext dbContext)
         return await dbContext.Sales
                               .AsNoTracking()
                               .Include(x => x.Items)
+                              .Include(x => x.CreatedByUser)
+                              .Include(x => x.UpdatedByUser)
                               .Where(x => x.OrganizationId == organizationId)
                               .FirstOrDefaultAsync(x => x.Id == id, cancellationToken);
     }

@@ -1,6 +1,6 @@
-namespace ProdutivAgro.Application.Sales.Queries.GetSales;
+namespace ProdutivAgro.Application.Sales.Shared;
 
-public sealed class CreatedByUserResult
+public class SaleUserResult
 {
     public Guid Id { get; init; }
     public string Name { get; init; } = string.Empty;

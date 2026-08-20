@@ -28,6 +28,7 @@ public class Sale : AggregateRoot
     public Guid CreatedByUserId { get; private set; }
     public Guid? UpdatedByUserId { get; private set; }
     public User CreatedByUser { get; private set; } = null!;
+    public User? UpdatedByUser { get; private set; }
 
     public SaleStatus Status { get; private set; }
 
