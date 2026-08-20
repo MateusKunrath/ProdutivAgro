@@ -15,6 +15,7 @@ public class ProdutivAgroDbContext : DbContext
     public DbSet<Organization> Organizations => Set<Organization>();
     public DbSet<Sale> Sales => Set<Sale>();
     public DbSet<SaleItem> SaleItems => Set<SaleItem>();
+    public DbSet<SaleStatusHistory> SalesStatusHistory => Set<SaleStatusHistory>();
 
     protected override void OnModelCreating(ModelBuilder builder)
     {

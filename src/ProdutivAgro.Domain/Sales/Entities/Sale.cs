@@ -8,6 +8,7 @@ namespace ProdutivAgro.Domain.Sales.Entities;
 public class Sale : AggregateRoot
 {
     private readonly List<SaleItem> _items = [];
+    private readonly List<SaleStatusHistory> _statusHistory = [];
 
     public Sale(
         Guid organizationId,
@@ -39,6 +40,7 @@ public class Sale : AggregateRoot
     public DateTimeOffset UpdatedAt { get; private set; }
 
     public IReadOnlyCollection<SaleItem> Items => _items;
+    public IReadOnlyCollection<SaleStatusHistory> SalesStatusHistory => _statusHistory;
 
     public SaleItem AddItem(Product product, decimal quantity)
     {
