@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using ProdutivAgro.Api.Contracts.Errors;
 using ProdutivAgro.Api.Contracts.Sales;
 using ProdutivAgro.Application.Sales.Commands.AddSaleItems;
+using ProdutivAgro.Application.Sales.Commands.CancelSale;
 using ProdutivAgro.Application.Sales.Commands.CompleteSale;
 using ProdutivAgro.Application.Sales.Commands.CreateSale;
 using ProdutivAgro.Application.Sales.Commands.DeleteSaleItem;
@@ -33,7 +34,7 @@ public class SalesController(IMediator mediator) : ControllerBase
     }
 
     [HttpPost]
-    [Route("{id:guid}/items")]
+    [Route("{id:guid}/Items")]
     [ProducesResponseType(typeof(List<AddSaleItemResult>), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status404NotFound)]
@@ -87,6 +88,21 @@ public class SalesController(IMediator mediator) : ControllerBase
 
         return NoContent();
     }
+    
+    [HttpPost]
+    [Route("{id:guid}/Cancel")]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status404NotFound)]
+    public async Task<IActionResult> CancelSale([FromRoute] Guid id, CancellationToken cancellationToken)
+    {
+        await mediator.Send(new CancelSaleCommand
+        {
+            Id = id,
+        }, cancellationToken);
+
+        return NoContent();
+    }
 
     [HttpGet]
     [Route("{id:guid}")]
@@ -103,7 +119,7 @@ public class SalesController(IMediator mediator) : ControllerBase
     }
 
     [HttpPatch]
-    [Route("{id:guid}/items/{saleItemId:guid}")]
+    [Route("{id:guid}/Items/{saleItemId:guid}")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status404NotFound)]
@@ -121,7 +137,7 @@ public class SalesController(IMediator mediator) : ControllerBase
     }
 
     [HttpDelete]
-    [Route("{id:guid}/items/{saleItemId:guid}")]
+    [Route("{id:guid}/Items/{saleItemId:guid}")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status404NotFound)]
     public async Task<IActionResult> DeleteSaleItem([FromRoute] Guid id, [FromRoute] Guid saleItemId,
