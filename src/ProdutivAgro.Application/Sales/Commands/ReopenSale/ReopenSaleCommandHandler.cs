@@ -2,8 +2,6 @@ using MediatR;
 using ProdutivAgro.Application.Abstractions.Authentication;
 using ProdutivAgro.Application.Abstractions.Persistence;
 using ProdutivAgro.Application.Sales.Shared.Validators;
-using ProdutivAgro.Domain.Sales.Entities;
-using ProdutivAgro.Domain.Sales.Enums;
 using ProdutivAgro.Domain.Sales.Repositories;
 using ProdutivAgro.Exception;
 using ProdutivAgro.Exception.ExceptionsBase;
@@ -28,11 +26,12 @@ public sealed class ReopenSaleCommandHandler(
             throw new NotFoundException(ResourceErrorMessages.SALE_NOT_FOUND);
         }
 
-        ValidateSale(sale);
+        if (!sale.TryReopen(currentUser.UserId, request.Reason, out var history))
+        {
+            throw new ErrorOnValidationException([ResourceErrorMessages.SALE_STATUS_INVALID]);
+        }
 
-        var history = sale.Reopen(currentUser.UserId, request.Reason);
-        await salesWriteOnlyRepository.AddStatusHistoryAsync(history, cancellationToken);
-
+        await salesWriteOnlyRepository.AddStatusHistoryAsync(history!, cancellationToken);
         await unitOfWork.Commit();
         return Unit.Value;
     }
@@ -44,14 +43,6 @@ public sealed class ReopenSaleCommandHandler(
         {
             var errorMessages = result.Errors.Select(e => e.ErrorMessage).ToList();
             throw new ErrorOnValidationException(errorMessages);
-        }
-    }
-
-    private static void ValidateSale(Sale sale)
-    {
-        if (sale.Status != SaleStatus.Completed)
-        {
-            throw new ErrorOnValidationException([ResourceErrorMessages.SALE_STATUS_INVALID]);
         }
     }
 }

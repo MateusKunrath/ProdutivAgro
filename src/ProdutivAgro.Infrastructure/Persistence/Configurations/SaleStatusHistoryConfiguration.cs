@@ -17,6 +17,7 @@ public sealed class SaleStatusHistoryConfiguration : IEntityTypeConfiguration<Sa
         builder.Property(x => x.CurrentStatus).IsRequired();
         builder.Property(x => x.Reason).HasMaxLength(500);
 
+        builder.HasIndex(x => new { x.SaleId, x.ChangedAt });
         builder.HasIndex(x => new { x.PreviousStatus });
         builder.HasIndex(x => new { x.CurrentStatus });
         builder.HasIndex(x => new { x.SaleId });

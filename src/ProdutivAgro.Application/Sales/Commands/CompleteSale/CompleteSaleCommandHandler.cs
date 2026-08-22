@@ -1,8 +1,6 @@
 using MediatR;
 using ProdutivAgro.Application.Abstractions.Authentication;
 using ProdutivAgro.Application.Abstractions.Persistence;
-using ProdutivAgro.Domain.Sales.Entities;
-using ProdutivAgro.Domain.Sales.Enums;
 using ProdutivAgro.Domain.Sales.Repositories;
 using ProdutivAgro.Exception;
 using ProdutivAgro.Exception.ExceptionsBase;
@@ -25,20 +23,18 @@ public sealed class CompleteSaleCommandHandler(
             throw new NotFoundException(ResourceErrorMessages.SALE_NOT_FOUND);
         }
 
-        Validate(sale);
+        if (sale.Items.Count == 0)
+        {
+            throw new ErrorOnValidationException([ResourceErrorMessages.SALE_ITEMS_EMPTY]);
+        }
 
-        var saleStatusHistory = sale.Complete(currentUser.UserId);
-        await salesWriteOnlyRepository.AddStatusHistoryAsync(saleStatusHistory, cancellationToken);
-
-        await unitOfWork.Commit();
-        return Unit.Value;
-    }
-
-    private static void Validate(Sale sale)
-    {
-        if (sale.Status != SaleStatus.Draft)
+        if (!sale.TryComplete(currentUser.UserId, out var history))
         {
             throw new ErrorOnValidationException([ResourceErrorMessages.SALE_STATUS_INVALID]);
         }
+
+        await salesWriteOnlyRepository.AddStatusHistoryAsync(history!, cancellationToken);
+        await unitOfWork.Commit();
+        return Unit.Value;
     }
 }

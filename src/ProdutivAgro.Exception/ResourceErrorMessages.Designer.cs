@@ -240,7 +240,7 @@ namespace ProdutivAgro.Exception {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Reason must be at least 5 characters long..
+        ///   Looks up a localized string similar to Reason must be at least 5 characters and maximum 500 characters long..
         /// </summary>
         public static string REASON_INVALID {
             get {

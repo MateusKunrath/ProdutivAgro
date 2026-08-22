@@ -198,6 +198,6 @@
         <value>Reason is required.</value>
     </data>
     <data name="REASON_INVALID" xml:space="preserve">
-        <value>Reason must be at least 5 characters long.</value>
+        <value>Reason must be at least 5 characters and maximum 500 characters long.</value>
     </data>
 </root>

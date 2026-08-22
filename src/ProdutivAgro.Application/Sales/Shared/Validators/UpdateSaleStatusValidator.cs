@@ -10,7 +10,9 @@ public class UpdateSaleStatusValidator<TResult> : AbstractValidator<UpdateSaleSt
     {
         RuleFor(x => x.Id).NotEmpty().WithMessage(ResourceErrorMessages.ID_IS_REQUIRED);
         RuleFor(x => x.Reason)
-            .NotEmpty().WithMessage(ResourceErrorMessages.REASON_IS_REQUIRED)
-            .MinimumLength(5).WithMessage(ResourceErrorMessages.REASON_INVALID);
+            .Must(reason => !string.IsNullOrWhiteSpace(reason))
+            .WithMessage(ResourceErrorMessages.REASON_IS_REQUIRED)
+            .MinimumLength(5).WithMessage(ResourceErrorMessages.REASON_INVALID)
+            .MaximumLength(500).WithMessage(ResourceErrorMessages.REASON_INVALID);
     }
 }

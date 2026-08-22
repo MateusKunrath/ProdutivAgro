@@ -2,8 +2,6 @@ using MediatR;
 using ProdutivAgro.Application.Abstractions.Authentication;
 using ProdutivAgro.Application.Abstractions.Persistence;
 using ProdutivAgro.Application.Sales.Shared.Validators;
-using ProdutivAgro.Domain.Sales.Entities;
-using ProdutivAgro.Domain.Sales.Enums;
 using ProdutivAgro.Domain.Sales.Repositories;
 using ProdutivAgro.Exception;
 using ProdutivAgro.Exception.ExceptionsBase;
@@ -27,11 +25,12 @@ public class UndoCancellationSaleCommandHandler(
             throw new NotFoundException(ResourceErrorMessages.SALE_NOT_FOUND);
         }
 
-        ValidateSale(sale);
+        if (!sale.TryUndoCancellation(currentUser.UserId, request.Reason, out var history))
+        {
+            throw new ErrorOnValidationException([ResourceErrorMessages.SALE_STATUS_INVALID]);
+        }
 
-        var history = sale.UndoCancellation(currentUser.UserId, request.Reason);
-        await salesWriteOnlyRepository.AddStatusHistoryAsync(history, cancellationToken);
-
+        await salesWriteOnlyRepository.AddStatusHistoryAsync(history!, cancellationToken);
         await unitOfWork.Commit();
         return Unit.Value;
     }
@@ -43,14 +42,6 @@ public class UndoCancellationSaleCommandHandler(
         {
             var errorMessages = result.Errors.Select(x => x.ErrorMessage).ToList();
             throw new ErrorOnValidationException(errorMessages);
-        }
-    }
-
-    private static void ValidateSale(Sale sale)
-    {
-        if (sale.Status != SaleStatus.Cancelled || sale.SalesStatusHistory.Count == 0)
-        {
-            throw new ErrorOnValidationException([ResourceErrorMessages.SALE_STATUS_INVALID]);
         }
     }
 }

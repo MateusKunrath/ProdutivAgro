@@ -26,7 +26,7 @@ public class Sale : AggregateRoot
 
     public Guid OrganizationId { get; private set; }
 
-    public Guid CreatedByUserId { get; private set; }
+    public Guid CreatedByUserId { get; }
     public Guid? UpdatedByUserId { get; private set; }
     public User CreatedByUser { get; private set; } = null!;
     public User? UpdatedByUser { get; private set; }
@@ -55,7 +55,7 @@ public class Sale : AggregateRoot
         _items.Add(item);
 
         UpdateTotalAmount();
-        Touched();
+        Touched(CreatedByUserId);
 
         return item;
     }
@@ -65,9 +65,10 @@ public class Sale : AggregateRoot
         TotalAmount = _items.Sum(x => x.TotalAmount);
     }
 
-    private void Touched()
+    private void Touched(Guid updatedByUserId)
     {
         UpdatedAt = DateTimeOffset.UtcNow;
+        UpdatedByUserId = updatedByUserId;
     }
 
     public bool UpdateItemQuantity(Guid saleItemId, decimal quantity)
@@ -80,7 +81,7 @@ public class Sale : AggregateRoot
 
         item.UpdateQuantity(quantity);
         UpdateTotalAmount();
-        Touched();
+        Touched(CreatedByUserId);
 
         return true;
     }
@@ -95,55 +96,93 @@ public class Sale : AggregateRoot
 
         _items.Remove(item);
         UpdateTotalAmount();
-        Touched();
+        Touched(CreatedByUserId);
 
         return true;
     }
 
-    public SaleStatusHistory Complete(Guid userId)
+    public bool TryComplete(Guid userId, out SaleStatusHistory? history)
     {
-        var saleStatusHistory = new SaleStatusHistory(Id, Status, SaleStatus.Completed, userId);
-        _statusHistory.Add(saleStatusHistory);
+        history = null;
 
+        if (_items.Count == 0 || Status != SaleStatus.Draft)
+        {
+            return false;
+        }
+
+        history = new SaleStatusHistory(Id, Status, SaleStatus.Completed, userId);
+
+        _statusHistory.Add(history);
         Status = SaleStatus.Completed;
-        Touched();
+        Touched(userId);
 
-        return saleStatusHistory;
+        return true;
     }
 
-    public SaleStatusHistory Cancel(Guid userId, string reason)
+    public bool TryCancel(Guid userId, string reason, out SaleStatusHistory? history)
     {
-        var saleStatusHistory = new SaleStatusHistory(Id, Status, SaleStatus.Cancelled, userId, reason);
-        _statusHistory.Add(saleStatusHistory);
+        history = null;
 
+        if (Status is not (SaleStatus.Draft or SaleStatus.Completed))
+        {
+            return false;
+        }
+
+        history = new SaleStatusHistory(Id, Status, SaleStatus.Cancelled, userId, reason);
+
+        _statusHistory.Add(history);
         Status = SaleStatus.Cancelled;
-        Touched();
+        Touched(userId);
 
-        return saleStatusHistory;
+        return true;
     }
 
-    public SaleStatusHistory UndoCancellation(Guid userId, string reason)
+    public bool TryUndoCancellation(Guid userId, string reason, out SaleStatusHistory? history)
     {
-        var lastSaleStatusHistory = _statusHistory.LastOrDefault();
-        var restoredStatus = lastSaleStatusHistory!.PreviousStatus;
+        history = null;
 
-        var saleStatusHistory = new SaleStatusHistory(Id, Status, restoredStatus, userId, reason);
-        _statusHistory.Add(saleStatusHistory);
+        var lastHistory = GetLastStatusHistory();
 
+        if (
+            Status != SaleStatus.Cancelled ||
+            lastHistory is null ||
+            lastHistory.CurrentStatus != SaleStatus.Cancelled
+        )
+        {
+            return false;
+        }
+
+        var restoredStatus = lastHistory.PreviousStatus;
+
+        history = new SaleStatusHistory(Id, Status, restoredStatus, userId, reason);
+
+        _statusHistory.Add(history);
         Status = restoredStatus;
-        Touched();
+        Touched(userId);
 
-        return saleStatusHistory;
+        return true;
     }
 
-    public SaleStatusHistory Reopen(Guid userId, string reason)
+    public bool TryReopen(Guid userId, string reason, out SaleStatusHistory? history)
     {
-        var saleStatusHistory = new SaleStatusHistory(Id, Status, SaleStatus.Draft, userId, reason);
-        _statusHistory.Add(saleStatusHistory);
+        history = null;
 
+        if (Status != SaleStatus.Completed)
+        {
+            return false;
+        }
+
+        history = new SaleStatusHistory(Id, Status, SaleStatus.Draft, userId, reason);
+
+        _statusHistory.Add(history);
         Status = SaleStatus.Draft;
-        Touched();
+        Touched(userId);
 
-        return saleStatusHistory;
+        return true;
+    }
+
+    private SaleStatusHistory? GetLastStatusHistory()
+    {
+        return _statusHistory.OrderByDescending(x => x.ChangedAt).FirstOrDefault();
     }
 }
