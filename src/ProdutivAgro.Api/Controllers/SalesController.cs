@@ -9,6 +9,7 @@ using ProdutivAgro.Application.Sales.Commands.CompleteSale;
 using ProdutivAgro.Application.Sales.Commands.CreateSale;
 using ProdutivAgro.Application.Sales.Commands.DeleteSaleItem;
 using ProdutivAgro.Application.Sales.Commands.ReopenSale;
+using ProdutivAgro.Application.Sales.Commands.UndoCancellation;
 using ProdutivAgro.Application.Sales.Commands.UpdateSaleItemQuantity;
 using ProdutivAgro.Application.Sales.Queries.GetSaleById;
 using ProdutivAgro.Application.Sales.Queries.GetSales;
@@ -118,6 +119,24 @@ public class SalesController(IMediator mediator) : ControllerBase
         CancellationToken cancellationToken)
     {
         await mediator.Send(new ReopenSaleCommand
+        {
+            Id = id,
+            Reason = request.Reason,
+        }, cancellationToken);
+
+        return NoContent();
+    }
+
+    [HttpPost]
+    [Authorize(Roles = nameof(UserRole.Administrator))]
+    [Route("{id:guid}/UndoCancellation")]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status404NotFound)]
+    public async Task<IActionResult> UndoCancellationSale([FromRoute] Guid id, UndoCancellationSaleRequest request,
+        CancellationToken cancellationToken)
+    {
+        await mediator.Send(new UndoCancellationSaleCommand
         {
             Id = id,
             Reason = request.Reason,
