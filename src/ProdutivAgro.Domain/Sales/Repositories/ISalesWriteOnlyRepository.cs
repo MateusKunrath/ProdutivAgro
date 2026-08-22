@@ -7,4 +7,6 @@ public interface ISalesWriteOnlyRepository
     Task AddAsync(Sale sale, CancellationToken cancellationToken);
 
     Task AddItemsAsync(IEnumerable<SaleItem> items, CancellationToken cancellationToken);
+
+    Task AddStatusHistoryAsync(SaleStatusHistory history, CancellationToken cancellationToken);
 }

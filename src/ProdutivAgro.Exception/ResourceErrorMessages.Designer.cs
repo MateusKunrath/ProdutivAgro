@@ -96,6 +96,15 @@ namespace ProdutivAgro.Exception {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Id is required..
+        /// </summary>
+        public static string ID_IS_REQUIRED {
+            get {
+                return ResourceManager.GetString("ID_IS_REQUIRED", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Credentials is invalid..
         /// </summary>
         public static string IDENTIFIER_OR_PASSWORD_INVALID {
@@ -227,6 +236,24 @@ namespace ProdutivAgro.Exception {
         public static string QUANTITY_MUST_BE_GREATER_THAN_ZERO {
             get {
                 return ResourceManager.GetString("QUANTITY_MUST_BE_GREATER_THAN_ZERO", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Reason must be at least 5 characters long..
+        /// </summary>
+        public static string REASON_INVALID {
+            get {
+                return ResourceManager.GetString("REASON_INVALID", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Reason is required..
+        /// </summary>
+        public static string REASON_IS_REQUIRED {
+            get {
+                return ResourceManager.GetString("REASON_IS_REQUIRED", resourceCulture);
             }
         }
         

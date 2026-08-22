@@ -6,6 +6,21 @@ namespace ProdutivAgro.Domain.Sales.Entities;
 
 public class SaleStatusHistory : Entity
 {
+    public SaleStatusHistory(
+        Guid saleId,
+        SaleStatus previousStatus,
+        SaleStatus currentStatus,
+        Guid changedByUserId,
+        string? reason = null)
+    {
+        SaleId = saleId;
+        PreviousStatus = previousStatus;
+        CurrentStatus = currentStatus;
+        ChangedByUserId = changedByUserId;
+        Reason = reason;
+        ChangedAt = DateTimeOffset.UtcNow;
+    }
+
     public Guid SaleId { get; private set; }
     public SaleStatus PreviousStatus { get; private set; }
     public SaleStatus CurrentStatus { get; private set; }

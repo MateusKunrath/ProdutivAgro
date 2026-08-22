@@ -1,4 +1,4 @@
-namespace ProdutivAgro.Application.Sales.Shared;
+namespace ProdutivAgro.Application.Sales.Shared.Queries;
 
 public class SaleUserResult
 {

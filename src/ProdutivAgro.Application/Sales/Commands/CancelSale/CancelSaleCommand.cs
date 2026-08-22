@@ -1,9 +1,6 @@
 using MediatR;
-using ProdutivAgro.Application.Abstractions.Authentication;
+using ProdutivAgro.Application.Sales.Shared.Commands;
 
 namespace ProdutivAgro.Application.Sales.Commands.CancelSale;
 
-public sealed class CancelSaleCommand : IRequest<Unit>, IRequireActiveOrganization
-{
-    public Guid Id { get; init; }
-}
+public sealed class CancelSaleCommand : UpdateSaleStatusCommand<Unit> { }

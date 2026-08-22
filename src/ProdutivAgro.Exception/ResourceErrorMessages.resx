@@ -191,4 +191,13 @@
     <data name="SALE_ITEM_NOT_FOUND" xml:space="preserve">
         <value>Item not found.</value>
     </data>
+    <data name="ID_IS_REQUIRED" xml:space="preserve">
+        <value>Id is required.</value>
+    </data>
+    <data name="REASON_IS_REQUIRED" xml:space="preserve">
+        <value>Reason is required.</value>
+    </data>
+    <data name="REASON_INVALID" xml:space="preserve">
+        <value>Reason must be at least 5 characters long.</value>
+    </data>
 </root>

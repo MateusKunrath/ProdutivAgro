@@ -11,13 +11,14 @@ public class SalesRepository(ProdutivAgroDbContext dbContext)
     async Task<Sale?> ISalesReadOnlyRepository.GetByIdAsync(Guid id, Guid organizationId,
         CancellationToken cancellationToken)
     {
-        return await dbContext.Sales
-                              .AsNoTracking()
-                              .Include(x => x.Items)
-                              .Include(x => x.CreatedByUser)
-                              .Include(x => x.UpdatedByUser)
-                              .Where(x => x.OrganizationId == organizationId)
-                              .FirstOrDefaultAsync(x => x.Id == id, cancellationToken);
+        return await dbContext
+                     .Sales
+                     .AsNoTracking()
+                     .Include(x => x.Items)
+                     .Include(x => x.CreatedByUser)
+                     .Include(x => x.UpdatedByUser)
+                     .Where(x => x.OrganizationId == organizationId)
+                     .FirstOrDefaultAsync(x => x.Id == id, cancellationToken);
     }
 
     public async Task<(List<Sale> Items, int TotalCount)> GetPagedAsync(
@@ -26,12 +27,13 @@ public class SalesRepository(ProdutivAgroDbContext dbContext)
         int pageSize,
         CancellationToken cancellationToken)
     {
-        var query = dbContext.Sales
-                             .AsNoTracking()
-                             .Include(x => x.CreatedByUser)
-                             .Where(x => x.OrganizationId == organizationId)
-                             .OrderByDescending(x => x.SoldAt)
-                             .ThenByDescending(x => x.Id);
+        var query = dbContext
+                    .Sales
+                    .AsNoTracking()
+                    .Include(x => x.CreatedByUser)
+                    .Where(x => x.OrganizationId == organizationId)
+                    .OrderByDescending(x => x.SoldAt)
+                    .ThenByDescending(x => x.Id);
 
         var totalCount = await query.CountAsync(cancellationToken);
 
@@ -44,18 +46,25 @@ public class SalesRepository(ProdutivAgroDbContext dbContext)
         return (sales, totalCount);
     }
 
+    public async Task<Sale?> GetByIdWithStatusHistoryAsync(Guid id, Guid organizationId,
+        CancellationToken cancellationToken)
+    {
+        return await dbContext
+                     .Sales
+                     .Include(x => x.Items)
+                     .Include(x => x.SalesStatusHistory)
+                     .Where(x => x.OrganizationId == organizationId)
+                     .FirstOrDefaultAsync(x => x.Id == id, cancellationToken);
+    }
+
     async Task<Sale?> ISalesUpdateOnlyRepository.GetByIdAsync(Guid id, Guid organizationId,
         CancellationToken cancellationToken)
     {
-        return await dbContext.Sales
-                              .Include(x => x.Items)
-                              .Where(x => x.OrganizationId == organizationId)
-                              .FirstOrDefaultAsync(x => x.Id == id, cancellationToken);
-    }
-
-    public void Update(Sale sale)
-    {
-        dbContext.Sales.Update(sale);
+        return await dbContext
+                     .Sales
+                     .Include(x => x.Items)
+                     .Where(x => x.OrganizationId == organizationId)
+                     .FirstOrDefaultAsync(x => x.Id == id, cancellationToken);
     }
 
     public async Task AddAsync(Sale sale, CancellationToken cancellationToken)
@@ -66,5 +75,10 @@ public class SalesRepository(ProdutivAgroDbContext dbContext)
     public async Task AddItemsAsync(IEnumerable<SaleItem> items, CancellationToken cancellationToken)
     {
         await dbContext.SaleItems.AddRangeAsync(items, cancellationToken);
+    }
+
+    public async Task AddStatusHistoryAsync(SaleStatusHistory history, CancellationToken cancellationToken)
+    {
+        await dbContext.SalesStatusHistory.AddAsync(history, cancellationToken);
     }
 }

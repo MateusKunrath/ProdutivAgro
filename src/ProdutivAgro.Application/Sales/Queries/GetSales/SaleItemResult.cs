@@ -1,4 +1,4 @@
-using ProdutivAgro.Application.Sales.Shared;
+using ProdutivAgro.Application.Sales.Shared.Queries;
 using ProdutivAgro.Application.Shared;
 
 namespace ProdutivAgro.Application.Sales.Queries.GetSales;

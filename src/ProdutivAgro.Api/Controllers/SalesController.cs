@@ -88,17 +88,19 @@ public class SalesController(IMediator mediator) : ControllerBase
 
         return NoContent();
     }
-    
+
     [HttpPost]
     [Route("{id:guid}/Cancel")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status404NotFound)]
-    public async Task<IActionResult> CancelSale([FromRoute] Guid id, CancellationToken cancellationToken)
+    public async Task<IActionResult> CancelSale([FromRoute] Guid id, CancelSaleRequest request,
+        CancellationToken cancellationToken)
     {
         await mediator.Send(new CancelSaleCommand
         {
             Id = id,
+            Reason = request.Reason,
         }, cancellationToken);
 
         return NoContent();

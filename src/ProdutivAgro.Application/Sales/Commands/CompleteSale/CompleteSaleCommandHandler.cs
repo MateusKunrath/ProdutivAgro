@@ -11,6 +11,7 @@ namespace ProdutivAgro.Application.Sales.Commands.CompleteSale;
 
 public sealed class CompleteSaleCommandHandler(
     ISalesUpdateOnlyRepository salesUpdateOnlyRepository,
+    ISalesWriteOnlyRepository salesWriteOnlyRepository,
     ICurrentUser currentUser,
     IUnitOfWork unitOfWork) : IRequestHandler<CompleteSaleCommand, Unit>
 {
@@ -26,7 +27,8 @@ public sealed class CompleteSaleCommandHandler(
 
         Validate(sale);
 
-        sale.SetSaleStatus(SaleStatus.Completed);
+        var saleStatusHistory = sale.Complete(currentUser.UserId);
+        await salesWriteOnlyRepository.AddStatusHistoryAsync(saleStatusHistory, cancellationToken);
 
         await unitOfWork.Commit();
         return Unit.Value;

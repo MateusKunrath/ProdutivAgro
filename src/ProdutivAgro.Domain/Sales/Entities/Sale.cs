@@ -60,11 +60,6 @@ public class Sale : AggregateRoot
         return item;
     }
 
-    public void SetSaleStatus(SaleStatus status)
-    {
-        Status = status;
-    }
-
     private void UpdateTotalAmount()
     {
         TotalAmount = _items.Sum(x => x.TotalAmount);
@@ -103,5 +98,52 @@ public class Sale : AggregateRoot
         Touched();
 
         return true;
+    }
+
+    public SaleStatusHistory Complete(Guid userId)
+    {
+        var saleStatusHistory = new SaleStatusHistory(Id, Status, SaleStatus.Completed, userId);
+        _statusHistory.Add(saleStatusHistory);
+
+        Status = SaleStatus.Completed;
+        Touched();
+
+        return saleStatusHistory;
+    }
+
+    public SaleStatusHistory Cancel(Guid userId, string reason)
+    {
+        var saleStatusHistory = new SaleStatusHistory(Id, Status, SaleStatus.Cancelled, userId, reason);
+        _statusHistory.Add(saleStatusHistory);
+
+        Status = SaleStatus.Cancelled;
+        Touched();
+
+        return saleStatusHistory;
+    }
+
+    public SaleStatusHistory UndoCancellation(Guid userId, string reason)
+    {
+        var lastSaleStatusHistory = _statusHistory.LastOrDefault();
+        var restoredStatus = lastSaleStatusHistory!.PreviousStatus;
+
+        var saleStatusHistory = new SaleStatusHistory(Id, Status, restoredStatus, userId, reason);
+        _statusHistory.Add(saleStatusHistory);
+
+        Status = restoredStatus;
+        Touched();
+
+        return saleStatusHistory;
+    }
+
+    public SaleStatusHistory Reopen(Guid userId, string reason)
+    {
+        var saleStatusHistory = new SaleStatusHistory(Id, Status, SaleStatus.Draft, userId, reason);
+        _statusHistory.Add(saleStatusHistory);
+
+        Status = SaleStatus.Draft;
+        Touched();
+
+        return saleStatusHistory;
     }
 }

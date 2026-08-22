@@ -1,6 +1,6 @@
 using MediatR;
 using ProdutivAgro.Application.Abstractions.Authentication;
-using ProdutivAgro.Application.Sales.Shared;
+using ProdutivAgro.Application.Sales.Shared.Queries;
 using ProdutivAgro.Application.Shared;
 using ProdutivAgro.Domain.Products.Extensions;
 using ProdutivAgro.Domain.Sales.Extensions;
