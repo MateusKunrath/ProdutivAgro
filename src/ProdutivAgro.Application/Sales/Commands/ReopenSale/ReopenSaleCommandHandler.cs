@@ -8,17 +8,18 @@ using ProdutivAgro.Domain.Sales.Repositories;
 using ProdutivAgro.Exception;
 using ProdutivAgro.Exception.ExceptionsBase;
 
-namespace ProdutivAgro.Application.Sales.Commands.CancelSale;
+namespace ProdutivAgro.Application.Sales.Commands.ReopenSale;
 
-public sealed class CancelSaleCommandHandler(
+public sealed class ReopenSaleCommandHandler(
     ISalesUpdateOnlyRepository salesUpdateOnlyRepository,
     ISalesWriteOnlyRepository salesWriteOnlyRepository,
     ICurrentUser currentUser,
-    IUnitOfWork unitOfWork) : IRequestHandler<CancelSaleCommand, Unit>
+    IUnitOfWork unitOfWork) : IRequestHandler<ReopenSaleCommand, Unit>
 {
-    public async Task<Unit> Handle(CancelSaleCommand request, CancellationToken cancellationToken)
+    public async Task<Unit> Handle(ReopenSaleCommand request, CancellationToken cancellationToken)
     {
         await Validate(request, cancellationToken);
+
         var sale = await salesUpdateOnlyRepository.GetByIdWithStatusHistoryAsync(request.Id, currentUser.OrganizationId,
             cancellationToken);
 
@@ -29,26 +30,26 @@ public sealed class CancelSaleCommandHandler(
 
         ValidateSale(sale);
 
-        var saleStatusHistory = sale.Cancel(currentUser.UserId, request.Reason);
-        await salesWriteOnlyRepository.AddStatusHistoryAsync(saleStatusHistory, cancellationToken);
+        var history = sale.Reopen(currentUser.UserId, request.Reason);
+        await salesWriteOnlyRepository.AddStatusHistoryAsync(history, cancellationToken);
 
         await unitOfWork.Commit();
         return Unit.Value;
     }
 
-    private static async Task Validate(CancelSaleCommand request, CancellationToken cancellationToken)
+    private static async Task Validate(ReopenSaleCommand request, CancellationToken cancellationToken)
     {
         var result = await new UpdateSaleStatusValidator<Unit>().ValidateAsync(request, cancellationToken);
         if (!result.IsValid)
         {
-            var errorMessages = result.Errors.Select(x => x.ErrorMessage).ToList();
+            var errorMessages = result.Errors.Select(e => e.ErrorMessage).ToList();
             throw new ErrorOnValidationException(errorMessages);
         }
     }
 
     private static void ValidateSale(Sale sale)
     {
-        if (sale.Status == SaleStatus.Cancelled)
+        if (sale.Status != SaleStatus.Completed)
         {
             throw new ErrorOnValidationException([ResourceErrorMessages.SALE_STATUS_INVALID]);
         }
