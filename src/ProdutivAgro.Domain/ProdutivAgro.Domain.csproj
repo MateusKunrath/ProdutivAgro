@@ -6,8 +6,4 @@
         <Nullable>enable</Nullable>
     </PropertyGroup>
 
-    <ItemGroup>
-        <ProjectReference Include="..\ProdutivAgro.SharedKernel\ProdutivAgro.SharedKernel.csproj"/>
-    </ItemGroup>
-
 </Project>

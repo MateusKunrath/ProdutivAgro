@@ -226,7 +226,6 @@ src/
   ProdutivAgro.Domain/         # Entities, enums, and repository contracts
   ProdutivAgro.Exception/      # Exceptions and error messages
   ProdutivAgro.Infrastructure/ # EF Core, DbContext, migrations, repositories, and JWT
-  ProdutivAgro.SharedKernel/   # Shared domain types
 
 tests/
   ProdutivAgro.Application.UnitTests/ # Use case and validator tests

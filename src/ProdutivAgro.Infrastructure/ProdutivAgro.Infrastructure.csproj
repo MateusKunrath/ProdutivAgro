@@ -18,7 +18,6 @@
     <ItemGroup>
         <ProjectReference Include="..\ProdutivAgro.Application\ProdutivAgro.Application.csproj"/>
         <ProjectReference Include="..\ProdutivAgro.Domain\ProdutivAgro.Domain.csproj"/>
-        <ProjectReference Include="..\ProdutivAgro.SharedKernel\ProdutivAgro.SharedKernel.csproj"/>
     </ItemGroup>
 
 </Project>

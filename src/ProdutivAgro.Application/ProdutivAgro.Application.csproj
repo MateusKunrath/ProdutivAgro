@@ -21,7 +21,6 @@
     <ItemGroup>
         <ProjectReference Include="..\ProdutivAgro.Domain\ProdutivAgro.Domain.csproj"/>
         <ProjectReference Include="..\ProdutivAgro.Exception\ProdutivAgro.Exception.csproj"/>
-        <ProjectReference Include="..\ProdutivAgro.SharedKernel\ProdutivAgro.SharedKernel.csproj"/>
     </ItemGroup>
 
 </Project>
