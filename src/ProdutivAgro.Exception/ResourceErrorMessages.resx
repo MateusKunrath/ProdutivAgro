@@ -200,4 +200,10 @@
     <data name="REASON_INVALID" xml:space="preserve">
         <value>Reason must be at least 5 characters and maximum 500 characters long.</value>
     </data>
+    <data name="USER_ROLE_INVALID" xml:space="preserve">
+        <value>User role is invalid.</value>
+    </data>
+    <data name="ONLY_RESPONSIBLE_CAN_CREATE_INVITATIONS" xml:space="preserve">
+        <value>Only the person responsible for the organization can create inivitations for the organization.</value>
+    </data>
 </root>

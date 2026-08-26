@@ -1,12 +1,14 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Options;
 using ProdutivAgro.Application.Abstractions.Authentication;
 using ProdutivAgro.Application.Abstractions.Persistence;
 using ProdutivAgro.Domain.Identity.Repositories;
 using ProdutivAgro.Domain.Products.Repositories;
 using ProdutivAgro.Domain.Sales.Repositories;
 using ProdutivAgro.Infrastructure.Identity;
+using ProdutivAgro.Infrastructure.Identity.Invitations;
 using ProdutivAgro.Infrastructure.Identity.Jwt;
 using ProdutivAgro.Infrastructure.Identity.Password;
 using ProdutivAgro.Infrastructure.Identity.Persistence.Repositories;
@@ -23,19 +25,32 @@ public static class DependencyInjectionExtension
         services.AddScoped<IPasswordEncrypter, BCryptPasswordHasher>();
         services.AddScoped<ICurrentUser, CurrentUser>();
 
-        AddToken(services, configuration);
+        AddIdentityServices(services, configuration);
         AddRepositories(services);
         AddDbContext(services, configuration);
     }
 
-    private static void AddToken(IServiceCollection services, IConfiguration configuration)
+    private static void AddIdentityServices(IServiceCollection services, IConfiguration configuration)
     {
         var expirationTimeInMinutes = configuration.GetValue<uint>("Settings:Jwt:ExpiresMinutes");
         var signingKey = configuration.GetValue<string>("Settings:Jwt:SigningKey");
         var refreshTokenExpirationDays = configuration.GetValue<uint>("Settings:RefreshToken:ExpiresDays", 30);
 
+        services.AddOptions<InvitationSettings>()
+                .BindConfiguration("Settings:Invitation")
+                .ValidateDataAnnotations()
+                .ValidateOnStart();
+
         services.AddScoped<IJwtTokenGenerator>(_ => new JwtTokenGenerator(expirationTimeInMinutes, signingKey!));
         services.AddSingleton<IRefreshTokenService>(_ => new RefreshTokenService(refreshTokenExpirationDays));
+
+        services.AddSingleton<IInvitationTokenService>(provider =>
+            new InvitationTokenService(
+                provider.GetRequiredService<IOptions<InvitationSettings>>()
+                        .Value
+                        .ExpiresDays));
+
+        services.AddSingleton<IInvitationUrlGenerator, InvitationUrlGenerator>();
     }
 
     private static void AddRepositories(IServiceCollection services)
@@ -47,6 +62,7 @@ public static class DependencyInjectionExtension
         AddUsersRepository(services);
         AddRefreshTokensRepository(services);
         AddSalesRepository(services);
+        AddOrganizationInvitations(services);
     }
 
     private static void AddDbContext(IServiceCollection services, IConfiguration configuration)
@@ -89,5 +105,11 @@ public static class DependencyInjectionExtension
         services.AddScoped<ISalesReadOnlyRepository, SalesRepository>();
         services.AddScoped<ISalesWriteOnlyRepository, SalesRepository>();
         services.AddScoped<ISalesUpdateOnlyRepository, SalesRepository>();
+    }
+
+    private static void AddOrganizationInvitations(IServiceCollection services)
+    {
+        services.AddScoped<IInvitationsUpdateOnlyRepository, OrganizationInvitationsRepository>();
+        services.AddScoped<IInvitationsWriteOnlyRepository, OrganizationInvitationsRepository>();
     }
 }

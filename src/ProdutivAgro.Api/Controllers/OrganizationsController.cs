@@ -4,7 +4,9 @@ using Microsoft.AspNetCore.Mvc;
 using ProdutivAgro.Api.Contracts.Errors;
 using ProdutivAgro.Api.Contracts.Organizations;
 using ProdutivAgro.Application.Identity.Commands.ChangeOrganizationResponsible;
+using ProdutivAgro.Application.Identity.Commands.CreateInvitation;
 using ProdutivAgro.Application.Identity.Queries.GetCurrentOrganization;
+using ProdutivAgro.Domain.Identity.Enums;
 
 namespace ProdutivAgro.Api.Controllers;
 
@@ -38,5 +40,23 @@ public sealed class OrganizationsController(IMediator mediator) : ControllerBase
         }, cancellationToken);
 
         return NoContent();
+    }
+
+    [HttpPost]
+    [Route("Invitations")]
+    [Authorize(Roles = nameof(UserRole.Administrator))]
+    [ProducesResponseType(typeof(CreateInvitationResult), StatusCodes.Status201Created)]
+    [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status403Forbidden)]
+    public async Task<IActionResult> CreateInvitation(CreateInvitationRequest request,
+        CancellationToken cancellationToken)
+    {
+        var result = await mediator.Send(new CreateInvitationCommand
+        {
+            Email = request.Email,
+            Role = request.Role,
+        }, cancellationToken);
+
+        return Created(string.Empty, result);
     }
 }

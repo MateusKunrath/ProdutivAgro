@@ -132,6 +132,15 @@ namespace ProdutivAgro.Exception {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Only the person responsible for the organization can create inivitations for the organization..
+        /// </summary>
+        public static string ONLY_RESPONSIBLE_CAN_CREATE_INVITATIONS {
+            get {
+                return ResourceManager.GetString("ONLY_RESPONSIBLE_CAN_CREATE_INVITATIONS", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Only the person responsible for the organization can transfer responsibility for the organization..
         /// </summary>
         public static string ONLY_RESPONSIBLE_CAN_TRANSFER_RESPONSABILITY {
@@ -344,6 +353,15 @@ namespace ProdutivAgro.Exception {
         public static string USER_NOT_FOUND {
             get {
                 return ResourceManager.GetString("USER_NOT_FOUND", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to User role is invalid..
+        /// </summary>
+        public static string USER_ROLE_INVALID {
+            get {
+                return ResourceManager.GetString("USER_ROLE_INVALID", resourceCulture);
             }
         }
     }
