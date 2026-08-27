@@ -1,5 +1,4 @@
 using Microsoft.EntityFrameworkCore;
-using ProdutivAgro.Domain.Identity.Entities;
 using ProdutivAgro.Domain.Products.Entities;
 using ProdutivAgro.Domain.Products.Repositories;
 using ProdutivAgro.Infrastructure.Persistence;
@@ -20,14 +19,6 @@ public class ProductsRepository(ProdutivAgroDbContext dbContext)
         return await dbContext.Products
                               .AsNoTracking()
                               .Where(product => ids.Contains(product.Id) && product.OrganizationId == organizationId)
-                              .ToListAsync(cancellationToken);
-    }
-
-    public async Task<List<Product>> GetAllAsync(Organization organization, CancellationToken cancellationToken)
-    {
-        return await dbContext.Products
-                              .AsNoTracking()
-                              .Where(x => x.OrganizationId == organization.Id)
                               .ToListAsync(cancellationToken);
     }
 

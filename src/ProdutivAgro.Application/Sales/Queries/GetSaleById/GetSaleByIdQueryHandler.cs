@@ -1,6 +1,5 @@
 using MediatR;
 using ProdutivAgro.Application.Abstractions.Authentication;
-using ProdutivAgro.Application.Sales.Shared.Queries;
 using ProdutivAgro.Application.Shared;
 using ProdutivAgro.Domain.Products.Extensions;
 using ProdutivAgro.Domain.Sales.Extensions;
@@ -30,7 +29,7 @@ public class GetSaleByIdQueryHandler(
             {
                 Id = sale.OrganizationId,
             },
-            CreatedUser = new SaleUserResult
+            CreatedUser = new UserResult
             {
                 Id = sale.CreatedByUser.Id,
                 Name = sale.CreatedByUser.Name,
@@ -38,7 +37,7 @@ public class GetSaleByIdQueryHandler(
             },
             UpdatedUser = sale.UpdatedByUser is null
                 ? null
-                : new SaleUserResult
+                : new UserResult
                 {
                     Id = sale.UpdatedByUser.Id,
                     Name = sale.UpdatedByUser.Name,

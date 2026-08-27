@@ -15,10 +15,6 @@
     </ItemGroup>
 
     <ItemGroup>
-        <Folder Include="Identity\Queries\"/>
-    </ItemGroup>
-
-    <ItemGroup>
         <ProjectReference Include="..\ProdutivAgro.Domain\ProdutivAgro.Domain.csproj"/>
         <ProjectReference Include="..\ProdutivAgro.Exception\ProdutivAgro.Exception.csproj"/>
     </ItemGroup>

@@ -32,6 +32,8 @@ public class OrganizationInvitation : Entity
     public DateTimeOffset? RevokedAt { get; private set; }
     public DateTimeOffset CreatedAt { get; private set; }
 
+    public User InvitedByUser { get; private set; } = null!;
+
     public void Revoke(DateTimeOffset revokedAt)
     {
         RevokedAt = revokedAt;

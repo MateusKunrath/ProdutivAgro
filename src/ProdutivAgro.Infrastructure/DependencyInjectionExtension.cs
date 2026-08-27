@@ -111,5 +111,6 @@ public static class DependencyInjectionExtension
     {
         services.AddScoped<IInvitationsUpdateOnlyRepository, OrganizationInvitationsRepository>();
         services.AddScoped<IInvitationsWriteOnlyRepository, OrganizationInvitationsRepository>();
+        services.AddScoped<IInvitationsReadOnlyRepository, OrganizationInvitationsRepository>();
     }
 }

@@ -6,6 +6,7 @@ using ProdutivAgro.Api.Contracts.Organizations;
 using ProdutivAgro.Application.Identity.Commands.ChangeOrganizationResponsible;
 using ProdutivAgro.Application.Identity.Commands.CreateInvitation;
 using ProdutivAgro.Application.Identity.Queries.GetCurrentOrganization;
+using ProdutivAgro.Application.Identity.Queries.GetInvitations;
 using ProdutivAgro.Domain.Identity.Enums;
 
 namespace ProdutivAgro.Api.Controllers;
@@ -58,5 +59,27 @@ public sealed class OrganizationsController(IMediator mediator) : ControllerBase
         }, cancellationToken);
 
         return Created(string.Empty, result);
+    }
+
+    [HttpGet]
+    [Route("Invitations")]
+    [Authorize(Roles = nameof(UserRole.Administrator))]
+    [ProducesResponseType(typeof(GetInvitationsResult), StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    public async Task<IActionResult> GetInvitations(
+        CancellationToken cancellationToken,
+        [FromQuery] int pageNumber = 1,
+        [FromQuery] int pageSize = 20)
+    {
+        var result = await mediator.Send(
+            new GetInvitationsQuery(pageNumber, pageSize),
+            cancellationToken);
+
+        if (result.Items.Count != 0)
+        {
+            return Ok(result);
+        }
+
+        return NoContent();
     }
 }

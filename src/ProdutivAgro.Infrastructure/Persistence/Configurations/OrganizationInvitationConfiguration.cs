@@ -21,17 +21,17 @@ public sealed class OrganizationInvitationConfiguration : IEntityTypeConfigurati
         builder.HasIndex(x => x.TokenHash).IsUnique();
         builder.HasIndex(x => new { x.OrganizationId, x.CreatedAt });
         builder.HasIndex(x => new { x.OrganizationId, x.Email })
-            .IsUnique()
-            .HasFilter("\"AcceptedAt\" IS NULL AND \"RevokedAt\" IS NULL");
+               .IsUnique()
+               .HasFilter("\"AcceptedAt\" IS NULL AND \"RevokedAt\" IS NULL");
 
         builder.HasOne<Organization>()
-            .WithMany()
-            .HasForeignKey(x => x.OrganizationId)
-            .OnDelete(DeleteBehavior.Restrict);
+               .WithMany()
+               .HasForeignKey(x => x.OrganizationId)
+               .OnDelete(DeleteBehavior.Restrict);
 
-        builder.HasOne<User>()
-            .WithMany()
-            .HasForeignKey(x => x.InvitedByUserId)
-            .OnDelete(DeleteBehavior.Restrict);
+        builder.HasOne(x => x.InvitedByUser)
+               .WithMany()
+               .HasForeignKey(x => x.InvitedByUserId)
+               .OnDelete(DeleteBehavior.Restrict);
     }
 }

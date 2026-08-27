@@ -1,6 +1,5 @@
 using MediatR;
 using ProdutivAgro.Application.Abstractions.Authentication;
-using ProdutivAgro.Application.Sales.Shared.Queries;
 using ProdutivAgro.Application.Shared;
 using ProdutivAgro.Domain.Sales.Extensions;
 using ProdutivAgro.Domain.Sales.Repositories;
@@ -37,7 +36,7 @@ public class GetSalesQueryHandler(
                     SoldAt = sale.SoldAt,
                     CreatedAt = sale.CreatedAt,
                     UpdatedAt = sale.UpdatedAt,
-                    SaleUser = new SaleUserResult
+                    SaleUser = new UserResult
                     {
                         Id = sale.CreatedByUser.Id,
                         Name = sale.CreatedByUser.Name,
