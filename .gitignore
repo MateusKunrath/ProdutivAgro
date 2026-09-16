@@ -1,0 +1,44 @@
+# Arquivos locais compartilhados
+.env
+.env.*
+!.env.example
+*.local
+
+# Sistema operacional e editores
+.DS_Store
+Thumbs.db
+Desktop.ini
+.vscode/
+.idea/
+.vs/
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+*.swp
+*.tmp
+
+# Backend (.NET)
+backend/**/bin/
+backend/**/obj/
+backend/**/[Dd]ebug/
+backend/**/[Rr]elease/
+backend/**/TestResults/
+backend/**/coverage*/
+backend/**/artifacts/
+backend/.agents/
+
+# Frontend (Node.js / pnpm / Vite)
+frontend/node_modules/
+frontend/.pnpm-store/
+frontend/dist/
+frontend/dist-ssr/
+frontend/coverage/
+frontend/*.tsbuildinfo
+frontend/npm-debug.log*
+frontend/yarn-debug.log*
+frontend/yarn-error.log*
+frontend/pnpm-debug.log*
+
+# Cache local do pnpm na raiz
+.pnpm-store/
