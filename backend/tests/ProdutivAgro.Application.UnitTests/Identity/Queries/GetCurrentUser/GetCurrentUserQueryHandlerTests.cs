@@ -1,6 +1,7 @@
 using FluentAssertions;
 using ProdutivAgro.Application.Identity.Queries.GetCurrentUser;
 using ProdutivAgro.Domain.Identity.Entities;
+using ProdutivAgro.Domain.Identity.Extensions;
 using ProdutivAgro.Exception;
 using ProdutivAgro.Exception.ExceptionsBase;
 using ProdutivAgro.Testing.Common.CurrentUser;
@@ -22,9 +23,9 @@ public sealed class GetCurrentUserQueryHandlerTests
         result.Id.Should().Be(user.Id);
         result.Name.Should().Be(user.Name);
         result.Email.Should().Be(user.Email);
-        result.OrganizationId.Should().Be(user.OrganizationId);
-        result.Role.Should().Be(user.Role);
-        result.Status.Should().Be(user.Active);
+        result.Organization.Id.Should().Be(user.OrganizationId);
+        result.Role.Should().Be(user.Role.RoleToString());
+        result.Status.Should().Be(user.Active.StatusToString());
     }
 
     [Fact]
