@@ -1,5 +1,4 @@
 using MediatR;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using ProdutivAgro.Api.Contracts.Errors;
 using ProdutivAgro.Api.Contracts.Products;
@@ -13,7 +12,6 @@ namespace ProdutivAgro.Api.Controllers;
 
 [Route("api/[controller]")]
 [ApiController]
-[Authorize]
 public class ProductsController(IMediator mediator) : ControllerBase
 {
     [HttpPost]

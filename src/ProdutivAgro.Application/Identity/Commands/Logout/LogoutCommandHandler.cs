@@ -13,6 +13,11 @@ public sealed class LogoutCommandHandler(
 {
     public async Task<Unit> Handle(LogoutCommand request, CancellationToken cancellationToken)
     {
+        if (string.IsNullOrWhiteSpace(request.RefreshToken))
+        {
+            return Unit.Value;
+        }
+
         var tokenHash = refreshTokenService.Hash(request.RefreshToken);
 
         var refreshToken = await refreshTokensReadOnlyRepository.GetByTokenHashAsync(tokenHash, cancellationToken);

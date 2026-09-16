@@ -1,5 +1,5 @@
 using ProdutivAgro.Api.Extensions;
-using ProdutivAgro.Api.Token;
+using ProdutivAgro.Api.Authentication;
 using ProdutivAgro.Application;
 using ProdutivAgro.Application.Abstractions.Authentication;
 using ProdutivAgro.Infrastructure;
@@ -19,11 +19,22 @@ builder.Services.AddApiExtensions();
 
 builder.Services.AddInfrastructure(builder.Configuration);
 builder.Services.AddApplication();
-builder.Services.AddScoped<ITokenProvider, HttpContextTokenValue>();
+builder.Services.AddScoped<AuthenticationCookieService>();
 
 builder.Services.AddHttpContextAccessor();
 
 builder.Services.AddJwtAuthentication(builder.Configuration);
+
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("FrontendDev", policy =>
+    {
+        policy.WithOrigins("http://localhost:5173")
+              .AllowAnyHeader()
+              .AllowAnyMethod()
+              .AllowCredentials();
+    });
+});
 
 var app = builder.Build();
 
@@ -36,6 +47,7 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
+app.UseCors("FrontendDev");
 app.UseAuthentication();
 app.UseAuthorization();
 

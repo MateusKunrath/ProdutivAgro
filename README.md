@@ -90,13 +90,7 @@ Supported measurement units are `Kilogram`, `Unit`, `Box`, and `Tray`.
 
 ## Authentication
 
-Protected endpoints require a JWT access token:
-
-```text
-Authorization: Bearer {accessToken}
-```
-
-In Swagger, click **Authorize** and enter `Bearer {accessToken}` after logging in.
+Protected endpoints use the `access_token` cookie issued by the API. The cookie is `HttpOnly`, so browser code cannot read it or attach it manually.
 
 ## Main endpoints
 
@@ -105,10 +99,11 @@ In Swagger, click **Authorize** and enter `Bearer {accessToken}` after logging i
 | Method | Route | Description |
 | --- | --- | --- |
 | `POST` | `/api/Auth/Register` | Creates a user and its initial organization. |
-| `POST` | `/api/Auth/Login` | Authenticates a user and returns tokens. |
-| `POST` | `/api/Auth/RefreshAccessToken` | Generates a new access token from a refresh token. |
-| `POST` | `/api/Auth/Logout` | Invalidates the provided refresh token. |
-| `POST` | `/api/Auth/ChangePassword` | Changes the authenticated user's password. |
+| `POST` | `/api/Auth/Login` | Authenticates a user and issues `HttpOnly` authentication cookies. |
+| `POST` | `/api/Auth/RefreshAccessToken` | Rotates the authentication cookies using the refresh-token cookie. |
+| `POST` | `/api/Auth/Logout` | Revokes the refresh token and removes both authentication cookies. |
+| `GET` | `/api/Users/Current` | Returns the authenticated user's profile. |
+| `POST` | `/api/Users/ChangePassword` | Changes the authenticated user's password. |
 
 Registration request example:
 

@@ -18,6 +18,16 @@ public static class AuthenticationExtensions
         }).AddJwtBearer(config =>
         {
             config.MapInboundClaims = false;
+            config.Events = new JwtBearerEvents
+            {
+                OnMessageReceived = context =>
+                {
+                    context.Token = context.Request.Cookies[
+                        ProdutivAgro.Api.Authentication.AuthenticationCookieService.AccessTokenCookieName];
+
+                    return Task.CompletedTask;
+                },
+            };
             config.TokenValidationParameters = new TokenValidationParameters
             {
                 ValidateIssuer = false,
