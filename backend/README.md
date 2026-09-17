@@ -1,229 +1,303 @@
-# ProdutivAgro
+# ProdutivAgro Backend
 
-ProdutivAgro is a REST API for product and sales management in agricultural organizations. Each account belongs to one organization, and product and sales data is isolated by organization.
+[Português](#português) | [English](#english)
 
-The project follows **Clean Architecture** and **DDD** principles: the domain contains business rules and contracts; the application layer implements use cases and validation; infrastructure provides persistence, authentication, and technical integrations; and the API exposes documented HTTP endpoints through Swagger.
+## Português
+API REST para organizações agrícolas, produtos, vendas, autenticação e convites. O projeto é uma solução .NET 8 organizada em Clean Architecture e DDD, usando Entity Framework Core e PostgreSQL.
 
-## Features
+### Tecnologias
 
-- User registration with initial organization creation.
-- JWT authentication, refresh-token renewal and invalidation, and password changes.
-- Current-organization lookup and responsibility transfer to another user.
-- Product CRUD with unit price and measurement unit.
-- Sales lifecycle with **Draft**, **Completed**, and **Cancelled** statuses.
-- Draft-sale creation; item addition, quantity updates, and item removal.
-- Paginated and detailed sales queries, including item and total information.
-- Data isolation for the authenticated user's organization.
-- Request validation with FluentValidation, centralized error handling, and interactive Swagger documentation.
-- Automatic execution of pending Entity Framework Core migrations at API startup.
-- Unit and integration tests.
+- .NET 8 e ASP.NET Core Web API
+- C#
+- Entity Framework Core com Npgsql/PostgreSQL
+- MediatR e FluentValidation
+- JWT transportado em cookies HTTP-only
+- Swagger, xUnit e FluentAssertions
 
-## Domain definitions
+### Estrutura
 
-| Term | Definition |
+```text
+backend/
+├── src/
+│   ├── ProdutivAgro.Api/            # Controllers, HTTP, cookies, filtros e Swagger
+│   ├── ProdutivAgro.Application/    # Casos de uso, validações e comportamentos
+│   ├── ProdutivAgro.Domain/         # Entidades, enums e contratos de repositório
+│   ├── ProdutivAgro.Exception/      # Exceções e mensagens de erro
+│   └── ProdutivAgro.Infrastructure/ # EF Core, DbContext, migrações, repositórios e JWT
+├── tests/
+│   ├── ProdutivAgro.Application.UnitTests/
+│   ├── ProdutivAgro.Api.IntegrationTests/
+│   └── ProdutivAgro.Testing.Common/
+├── ProdutivAgro.slnx
+└── docker-compose.yml
+```
+
+### Pré-requisitos
+
+- .NET SDK 8.0 ou superior.
+- Docker Desktop, ou PostgreSQL disponível localmente.
+- A ferramenta `dotnet-ef` somente para criar ou aplicar migrações manualmente.
+
+Todos os comandos abaixo devem ser executados a partir de `backend/`, salvo quando indicado de outra forma.
+
+### Banco de dados local
+
+O `docker-compose.yml` sobe um contêiner PostgreSQL chamado `produtivagro-postgres`, publica a porta `5432` e cria o banco configurado para desenvolvimento.
+
+```sh
+docker compose up -d
+```
+
+Para parar e remover o contêiner criado pelo Compose:
+
+```sh
+docker compose down
+```
+
+### Configuração
+
+O ambiente de desenvolvimento é configurado em `src/ProdutivAgro.Api/appsettings.Development.json`. As chaves usadas pela aplicação são:
+
+| Chave de configuração | Finalidade |
 | --- | --- |
-| Organization | The context that owns users, products, and sales. Data is not shared between organizations. |
-| Responsible user | The user responsible for the organization, who can transfer that responsibility to another user. |
-| Product | A sellable item identified by description, unit price, and measurement unit. |
-| Draft sale | A newly created sale whose items can still be changed. |
-| Completed sale | A sale finalized from the draft status. |
-| Cancelled sale | A sale marked as cancelled; it cannot be cancelled again. |
-| Sale total | The sum of item totals, calculated as `quantity × unit price`. |
+| `ConnectionStrings:DefaultConnection` | Conexão com PostgreSQL. |
+| `Settings:Jwt:SigningKey` | Chave de assinatura dos tokens JWT. |
+| `Settings:Jwt:ExpiresMinutes` | Duração do token de acesso. |
+| `Settings:RefreshToken:ExpiresDays` | Duração do refresh token. |
+| `Settings:Invitation:AcceptanceUrl` | URL usada na criação de convites. |
+| `Settings:Invitation:ExpiresDays` | Duração dos convites. |
 
-Supported measurement units are `Kilogram`, `Unit`, `Box`, and `Tray`.
+O ASP.NET Core também aceita essas chaves como variáveis de ambiente, substituindo `:` por `__`; por exemplo, `ConnectionStrings__DefaultConnection` e `Settings__Jwt__SigningKey`. Não existe arquivo `.env` ou exemplo versionado para o backend.
 
-## Built with
+As configurações de desenvolvimento atuais já contêm valores locais. Para outros ambientes, forneça valores adequados fora do controle de versão, especialmente para conexão e chave JWT.
 
-![.NET 8](https://img.shields.io/badge/.NET%208-512BD4?logo=dotnet&logoColor=white&style=for-the-badge)
-![C Sharp](https://img.shields.io/badge/C%23-239120?logo=csharp&logoColor=white&style=for-the-badge)
-![PostgreSQL](https://img.shields.io/badge/PostgreSQL-4169E1?logo=postgresql&logoColor=white&style=for-the-badge)
-![Entity Framework Core](https://img.shields.io/badge/Entity%20Framework%20Core-512BD4?logo=dotnet&logoColor=white&style=for-the-badge)
-![Swagger](https://img.shields.io/badge/Swagger-85EA2D?logo=swagger&logoColor=black&style=for-the-badge)
-![xUnit](https://img.shields.io/badge/xUnit-5E2B97?style=for-the-badge)
+### Executar
 
-## Getting started
-
-### Prerequisites
-
-- [.NET SDK 8.0](https://dotnet.microsoft.com/download/dotnet/8.0) or later.
-- [Docker Desktop](https://www.docker.com/products/docker-desktop/) (recommended) or a local PostgreSQL instance.
-
-### Installation and execution
-
-1. Clone the repository and enter the project directory:
-
-   ```sh
-   git clone https://github.com/MateusKunrath/ProdutivAgro.git
-   cd ProdutivAgro
-   ```
-
-2. Start PostgreSQL with Docker:
-
-   ```sh
-   docker compose up -d
-   ```
-
-   The `docker-compose.yml` file creates the `ProdutivAgroDb` database on port `5432`.
-
-3. Review the development configuration in `src/ProdutivAgro.Api/appsettings.Development.json`. The default configuration uses:
-
-   ```json
-   {
-     "ConnectionStrings": {
-       "DefaultConnection": "Host=localhost;Port=5432;Database=ProdutivAgroDb;Username=postgres;Password=@Password123"
-     }
-   }
-   ```
-
-   In production, provide the database password and JWT signing key through environment variables or User Secrets. Do not keep secrets in version-controlled files.
-
-4. Restore packages and run the API:
-
-   ```sh
-   dotnet restore ProdutivAgro.slnx
-   dotnet run --project src/ProdutivAgro.Api/ProdutivAgro.Api.csproj
-   ```
-
-   Pending migrations are applied automatically at startup.
-
-5. Open Swagger at [https://localhost:7149/swagger](https://localhost:7149/swagger). The HTTP profile uses `http://localhost:5041/swagger`.
-
-## Authentication
-
-Protected endpoints use the `access_token` cookie issued by the API. The cookie is `HttpOnly`, so browser code cannot read it or attach it manually.
-
-## Main endpoints
-
-### Authentication
-
-| Method | Route | Description |
-| --- | --- | --- |
-| `POST` | `/api/Auth/Register` | Creates a user and its initial organization. |
-| `POST` | `/api/Auth/Login` | Authenticates a user and issues `HttpOnly` authentication cookies. |
-| `POST` | `/api/Auth/RefreshAccessToken` | Rotates the authentication cookies using the refresh-token cookie. |
-| `POST` | `/api/Auth/Logout` | Revokes the refresh token and removes both authentication cookies. |
-| `GET` | `/api/Users/Current` | Returns the authenticated user's profile. |
-| `POST` | `/api/Users/ChangePassword` | Changes the authenticated user's password. |
-
-Registration request example:
-
-```json
-{
-  "name": "John Smith",
-  "email": "john@goodharvestfarm.com",
-  "password": "Password@123",
-  "organizationName": "Good Harvest Farm"
-}
-```
-
-### Organizations
-
-| Method | Route | Description |
-| --- | --- | --- |
-| `GET` | `/api/Organizations/Current` | Returns the authenticated user's organization. |
-| `PUT` | `/api/Organizations/ChangeResponsible` | Transfers organization responsibility. |
-
-### Products
-
-| Method | Route | Description |
-| --- | --- | --- |
-| `POST` | `/api/Products` | Creates a product. |
-| `GET` | `/api/Products?pageNumber=1&pageSize=20` | Lists products with pagination. |
-| `GET` | `/api/Products/{id}` | Retrieves a product by identifier. |
-| `PUT` | `/api/Products/{id}` | Updates a product. |
-| `DELETE` | `/api/Products/{id}` | Deletes a product. |
-
-Product request example:
-
-```json
-{
-  "description": "Soybeans",
-  "unitPrice": 132.5,
-  "measurementUnit": "Kilogram"
-}
-```
-
-### Sales
-
-| Method | Route | Description |
-| --- | --- | --- |
-| `POST` | `/api/Sales` | Creates a draft sale. |
-| `POST` | `/api/Sales/{id}/Items` | Adds one or more items to a sale. |
-| `PATCH` | `/api/Sales/{id}/Items/{saleItemId}` | Updates an item's quantity. |
-| `DELETE` | `/api/Sales/{id}/Items/{saleItemId}` | Removes an item from a sale. |
-| `POST` | `/api/Sales/{id}/Complete` | Completes a sale. |
-| `POST` | `/api/Sales/{id}/Cancel` | Cancels a sale. |
-| `GET` | `/api/Sales?pageNumber=1&pageSize=20` | Lists organization sales with pagination. |
-| `GET` | `/api/Sales/{id}` | Retrieves a sale, its items, and totals. |
-
-Create the sale first:
-
-```json
-{
-  "soldAt": "2026-08-19T10:00:00-03:00"
-}
-```
-
-Then add items using the returned sale identifier:
-
-```json
-[
-  {
-    "productId": "00000000-0000-0000-0000-000000000000",
-    "quantity": 10.5
-  }
-]
-```
-
-## Database and migrations
-
-Migrations are stored in `src/ProdutivAgro.Infrastructure/Migrations`. To create a migration, install the EF Core CLI tool if needed:
+Restaure os pacotes e inicie a API:
 
 ```sh
-dotnet tool install --global dotnet-ef
+dotnet restore ProdutivAgro.slnx
+dotnet run --project src/ProdutivAgro.Api/ProdutivAgro.Api.csproj
 ```
 
-Then run the following command from the repository root:
+As migrações pendentes são aplicadas automaticamente na inicialização, exceto no ambiente de teste.
 
-```sh
-dotnet ef migrations add MigrationName --project src/ProdutivAgro.Infrastructure/ProdutivAgro.Infrastructure.csproj --startup-project src/ProdutivAgro.Api/ProdutivAgro.Api.csproj --output-dir Migrations
-```
+Os perfis atuais definem `ASPNETCORE_ENVIRONMENT=Development` e expõem a API em:
 
-To apply migrations manually without starting the API:
+- perfil HTTP: `http://localhost:5000`
+- perfil HTTPS: `https://localhost:5000` e `http://localhost:5041`
 
-```sh
-dotnet ef database update --project src/ProdutivAgro.Infrastructure/ProdutivAgro.Infrastructure.csproj --startup-project src/ProdutivAgro.Api/ProdutivAgro.Api.csproj
-```
+Com o perfil HTTPS, a interface Swagger está em `https://localhost:5000/swagger`.
 
-> Do not edit migrations that have already been shared or applied in other environments. Create a new migration for every schema change.
+### Autenticação e frontend
 
-## Tests
+Os endpoints protegidos usam o cookie `access_token`; o cookie é HTTP-only e não é acessível ao JavaScript do navegador. A API também usa um cookie de refresh token.
 
-Run all project tests with:
+O CORS de desenvolvimento está configurado apenas para `http://localhost:5173`, permitindo cabeçalhos, métodos e credenciais. O frontend deve apontar `VITE_API_URL` para a base da API e executar nessa origem para que a autenticação por cookies funcione na configuração atual.
+
+### Endpoints principais
+
+| Área | Rotas disponíveis |
+| --- | --- |
+| Autenticação | `POST /api/Auth/Login`, `POST /api/Auth/Register`, `POST /api/Auth/RefreshAccessToken`, `POST /api/Auth/Logout` |
+| Usuário | `GET /api/Users/Current`, `POST /api/Users/ChangePassword` |
+| Organização | `GET /api/Organizations/Current`, `PUT /api/Organizations/ChangeResponsible`, `POST` e `GET /api/Organizations/Invitations` |
+| Produtos | `POST`, `GET /api/Products`; `GET`, `PUT` e `DELETE /api/Products/{id}` |
+| Vendas | criação, consulta, itens, conclusão, cancelamento, reabertura e reversão sob `/api/Sales` |
+
+Os endpoints de convites e as operações administrativas de reabrir ou desfazer cancelamento de venda exigem a função `Administrator`.
+
+### Testes e build
+
+Execute todos os testes:
 
 ```sh
 dotnet test ProdutivAgro.slnx
 ```
 
-Or run a specific test project:
+Execute somente os testes unitários da aplicação:
 
 ```sh
 dotnet test tests/ProdutivAgro.Application.UnitTests/ProdutivAgro.Application.UnitTests.csproj
-dotnet test tests/ProdutivAgro.Api.IntegrationTests/ProdutivAgro.Api.IntegrationTests.csproj
 ```
 
-## Project structure
+Build da solução:
+
+```sh
+dotnet build ProdutivAgro.slnx
+```
+
+### Migrações
+
+As migrações ficam em `src/ProdutivAgro.Infrastructure/Migrations`.
+
+Instale a CLI do Entity Framework Core, se ela ainda não estiver disponível:
+
+```sh
+dotnet tool install --global dotnet-ef
+```
+
+Crie uma migração:
+
+```sh
+dotnet ef migrations add MigrationName --project src/ProdutivAgro.Infrastructure/ProdutivAgro.Infrastructure.csproj --startup-project src/ProdutivAgro.Api/ProdutivAgro.Api.csproj --output-dir Migrations
+```
+
+Atualize o banco manualmente, sem iniciar a API:
+
+```sh
+dotnet ef database update --project src/ProdutivAgro.Infrastructure/ProdutivAgro.Infrastructure.csproj --startup-project src/ProdutivAgro.Api/ProdutivAgro.Api.csproj
+```
+
+Não edite migrações que já tenham sido compartilhadas ou aplicadas em outros ambientes; crie uma nova migração para cada alteração de esquema.
+## English
+
+### Overview
+
+REST API for agricultural organizations, products, sales, authentication, and invitations. It is a .NET 8 solution organized with Clean Architecture and DDD, using Entity Framework Core and PostgreSQL.
+
+### Technologies
+
+- .NET 8 and ASP.NET Core Web API
+- C#
+- Entity Framework Core with Npgsql/PostgreSQL
+- MediatR and FluentValidation
+- JWT transported in HTTP-only cookies
+- Swagger, xUnit, and FluentAssertions
+
+### Structure
 
 ```text
-src/
-  ProdutivAgro.Api/            # Controllers, HTTP authentication, filters, and Swagger
-  ProdutivAgro.Application/    # Use cases, validations, and behaviors
-  ProdutivAgro.Domain/         # Entities, enums, and repository contracts
-  ProdutivAgro.Exception/      # Exceptions and error messages
-  ProdutivAgro.Infrastructure/ # EF Core, DbContext, migrations, repositories, and JWT
-
-tests/
-  ProdutivAgro.Application.UnitTests/ # Use case and validator tests
-  ProdutivAgro.Api.IntegrationTests/  # API integration tests
-  ProdutivAgro.Testing.Common/         # Test builders and utilities
+backend/
+├── src/
+│   ├── ProdutivAgro.Api/            # Controllers, HTTP, cookies, filters, and Swagger
+│   ├── ProdutivAgro.Application/    # Use cases, validation, and behaviors
+│   ├── ProdutivAgro.Domain/         # Entities, enums, and repository contracts
+│   ├── ProdutivAgro.Exception/      # Exceptions and error messages
+│   └── ProdutivAgro.Infrastructure/ # EF Core, DbContext, migrations, repositories, and JWT
+├── tests/
+│   ├── ProdutivAgro.Application.UnitTests/
+│   ├── ProdutivAgro.Api.IntegrationTests/
+│   └── ProdutivAgro.Testing.Common/
+├── ProdutivAgro.slnx
+└── docker-compose.yml
 ```
+
+### Prerequisites
+
+- .NET SDK 8.0 or later.
+- Docker Desktop or a local PostgreSQL instance.
+- `dotnet-ef` only when creating or applying migrations manually.
+
+Run every command below from `backend/`, unless noted otherwise.
+
+### Local database
+
+`docker-compose.yml` starts a PostgreSQL container named `produtivagro-postgres`, exposes port `5432`, and creates the database configured for development.
+
+```sh
+docker compose up -d
+```
+
+Stop and remove the Compose container:
+
+```sh
+docker compose down
+```
+
+### Configuration
+
+Development settings are in `src/ProdutivAgro.Api/appsettings.Development.json`.
+
+| Configuration key | Purpose |
+| --- | --- |
+| `ConnectionStrings:DefaultConnection` | PostgreSQL connection. |
+| `Settings:Jwt:SigningKey` | JWT signing key. |
+| `Settings:Jwt:ExpiresMinutes` | Access-token lifetime. |
+| `Settings:RefreshToken:ExpiresDays` | Refresh-token lifetime. |
+| `Settings:Invitation:AcceptanceUrl` | URL used when creating invitations. |
+| `Settings:Invitation:ExpiresDays` | Invitation lifetime. |
+
+ASP.NET Core also accepts these keys as environment variables by replacing `:` with `__`, such as `ConnectionStrings__DefaultConnection` and `Settings__Jwt__SigningKey`. The backend has no versioned `.env` file or example.
+
+The current development file already contains local values. Provide suitable values outside version control for other environments, especially database connection and JWT signing key.
+
+### Run
+
+Restore packages and start the API:
+
+```sh
+dotnet restore ProdutivAgro.slnx
+dotnet run --project src/ProdutivAgro.Api/ProdutivAgro.Api.csproj
+```
+
+Pending migrations run automatically during startup, except in the test environment.
+
+The current profiles set `ASPNETCORE_ENVIRONMENT=Development` and expose:
+
+- HTTP profile: `http://localhost:5000`
+- HTTPS profile: `https://localhost:5000` and `http://localhost:5041`
+
+With the HTTPS profile, Swagger is available at `https://localhost:5000/swagger`.
+
+### Authentication and frontend
+
+Protected endpoints use the HTTP-only `access_token` cookie; the browser cannot read it from JavaScript. The API also uses a refresh-token cookie.
+
+Development CORS allows only `http://localhost:5173`, headers, methods, and credentials. The frontend must point `VITE_API_URL` to the API base URL and run from that origin for cookie authentication to work with the current configuration.
+
+### Main endpoints
+
+| Area | Available routes |
+| --- | --- |
+| Authentication | `POST /api/Auth/Login`, `POST /api/Auth/Register`, `POST /api/Auth/RefreshAccessToken`, `POST /api/Auth/Logout` |
+| User | `GET /api/Users/Current`, `POST /api/Users/ChangePassword` |
+| Organization | `GET /api/Organizations/Current`, `PUT /api/Organizations/ChangeResponsible`, `POST` and `GET /api/Organizations/Invitations` |
+| Products | `POST`, `GET /api/Products`; `GET`, `PUT`, and `DELETE /api/Products/{id}` |
+| Sales | creation, queries, item management, completion, cancellation, reopening, and undoing cancellation under `/api/Sales` |
+
+Invitation endpoints and administrative sale operations require the `Administrator` role.
+
+### Tests and build
+
+Run all tests:
+
+```sh
+dotnet test ProdutivAgro.slnx
+```
+
+Run application unit tests only:
+
+```sh
+dotnet test tests/ProdutivAgro.Application.UnitTests/ProdutivAgro.Application.UnitTests.csproj
+```
+
+Build the solution:
+
+```sh
+dotnet build ProdutivAgro.slnx
+```
+
+### Migrations
+
+Migrations are in `src/ProdutivAgro.Infrastructure/Migrations`.
+
+Install the Entity Framework Core CLI if it is not already available:
+
+```sh
+dotnet tool install --global dotnet-ef
+```
+
+Create a migration:
+
+```sh
+dotnet ef migrations add MigrationName --project src/ProdutivAgro.Infrastructure/ProdutivAgro.Infrastructure.csproj --startup-project src/ProdutivAgro.Api/ProdutivAgro.Api.csproj --output-dir Migrations
+```
+
+Update the database without starting the API:
+
+```sh
+dotnet ef database update --project src/ProdutivAgro.Infrastructure/ProdutivAgro.Infrastructure.csproj --startup-project src/ProdutivAgro.Api/ProdutivAgro.Api.csproj
+```
+
+Do not edit migrations already shared or applied in other environments; create a new migration for every schema change.
