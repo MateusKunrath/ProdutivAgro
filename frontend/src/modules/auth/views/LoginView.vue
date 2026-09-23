@@ -75,8 +75,10 @@ async function submit() {
     </div>
     <section class="flex bg-background h-full max-w-3xl w-full p-4 items-center justify-center">
       <Card class="w-full max-w-md">
-        <CardHeader>
-          <CardTitle class="text-2xl font-bold tracking-tighter">Entrar com sua conta</CardTitle>
+        <CardHeader class="justify-center items-center">
+          <CardTitle class="text-2xl font-bold tracking-tighter text-center">
+            Bem-vindo de volta
+          </CardTitle>
           <CardDescription>Utilize seu e-mail para acessar sua conta</CardDescription>
         </CardHeader>
 

@@ -12,6 +12,7 @@ export const authRoutes: RouteRecordRaw = {
       name: AuthRoutesNames.Login,
       meta: {
         guestOnly: true,
+        title: 'Entrar',
       },
       component: () => import('@/modules/auth/views/LoginView.vue'),
     },

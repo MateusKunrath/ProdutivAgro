@@ -2,6 +2,7 @@ import { createRouter, createWebHistory, type RouteRecordRaw } from 'vue-router'
 import { authRoutes } from '@/modules/auth/routes.ts';
 import { AuthRoutesNames } from '@/modules/auth/enums/auth-routes-names.ts';
 import { useAuthStore } from '@/modules/auth/stores/auth.store.ts';
+import { PageTitleService } from '@/app/services/page-title.service.ts';
 
 const routes: RouteRecordRaw[] = [
   authRoutes,
@@ -13,11 +14,13 @@ const routes: RouteRecordRaw[] = [
       {
         path: '/',
         name: 'Dashboard',
+        meta: { title: 'Dashboard', browserTitle: null },
         component: () => import('@/modules/dashboard/views/DashboardView.vue'),
       },
       {
         path: '/produtos',
         name: 'Produtos',
+        meta: { title: 'Produtos' },
         component: () => import('@/modules/products/views/ProductsView.vue'),
       },
     ],
@@ -47,4 +50,8 @@ router.beforeEach(async (to) => {
   if (to.meta.guestOnly && authStore.isAuthenticated) {
     return { name: 'Dashboard' };
   }
+});
+
+router.afterEach((to) => {
+  PageTitleService.update(to);
 });
